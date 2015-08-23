@@ -1,0 +1,23 @@
+{
+  "name": "fold",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "./node_modules/mocha/bin/mocha test"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "ensure.js": "^0.5.3",
+    "introspect": "0.0.3",
+    "lodash": "^3.10.1",
+    "q": "^1.4.1",
+    "walk": "^2.3.9"
+  },
+  "devDependencies": {
+    "chai": "^3.2.0",
+    "co": "^4.6.0",
+    "mocha": "^2.2.5"
+  }
+}
