@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "maketest",
-    "postinstall": "postinstall"
+    "test": "node maketest",
+    "postinstall": "node postinstall"
   },
   "author": "",
   "license": "ISC",
