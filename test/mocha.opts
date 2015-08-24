@@ -1,5 +1,0 @@
---bail
---check-leaks
---color
---es_staging
---require chai
