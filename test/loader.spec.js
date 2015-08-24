@@ -79,13 +79,32 @@ describe('Module Loader', function () {
       const basePath = path.join(__dirname, '/app')
       const baseNameSpace = 'App'
 
-      Loader.generate_directory_hash(basePath, basePath, baseNameSpace, function (err, hash) {
-        should.not.exist(err)
+      Loader.generate_directory_hash(basePath, basePath, baseNameSpace)
+      .then(function(hash){
         expect(hash).to.be.an('object')
         expect(hash['App/Services/UserService']).to.equal(path.join(__dirname + '/app/Services/UserService.js'))
         done()
-      })
-
+      }).catch(done)
     })
+
+    it('should save generated hash inside a file as a node module', function(done){
+
+      const basePath = path.join(__dirname, '/app')
+      const baseNameSpace = 'App'
+
+
+      Loader.generate_directory_hash(basePath, basePath, baseNameSpace)
+      .then(function(hash){
+        expect(hash).to.be.an('object')
+        expect(hash['App/Services/UserService']).to.equal(path.join(__dirname + '/app/Services/UserService.js'))
+        return Loader.save_directory_dump(hash)
+      })
+      .then(function(){
+        done()
+      })
+      .catch(done)
+
+    });
+
   })
 })

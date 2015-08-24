@@ -2,6 +2,8 @@
 
 const LoaderException = require('../Exception/loader')
 const walk = require('walk')
+const fs = require('fs')
+const path = require('path')
 
 /**
  * @module Loader
@@ -107,56 +109,77 @@ Loader.return_injection_type = function (bindings, unresolvedBindings, aliases, 
  * @param {String} rootNamespace
  * @return {Object}
  */
-Loader.generate_directory_hash = function (directory, basePath, rootNamespace, cb) {
+Loader.generate_directory_hash = function (directory, basePath, rootNamespace) {
   const walker = walk.walk(directory)
   let hash = {}
 
-  /*
-  |--------------------------------------------------------------------------
-  |   Walking
-  |--------------------------------------------------------------------------
-  |
-  |   Here we walk through all the files and make sure returned file
-  |   should have a name and is a .js file , if conditions are true
-  |   we make a namespace out of their path and store it as a key
-  |   value pair.
-  |
-  */
-  walker.on('file', function (parent, file, next) {
-    const extension = typeof (file.name) !== 'undefined' ? file.name.split('.').pop() : ''
-    if (extension === 'js') {
-      const modulePath = `${parent}/${file.name}`
-      const namespace = modulePath.replace(basePath, rootNamespace).replace('.js', '')
-      hash[namespace] = modulePath
-    }
-    next()
-  })
+  return new Promise(function(resolve,reject){
 
-  /*
-  |--------------------------------------------------------------------------
-  |   On Errors
-  |--------------------------------------------------------------------------
-  |
-  |   When a error event occurs , we simply return the callback saying
-  |   error happened.
-  |
-  */
-  walker.on('errors', function (error) {
-    cb(error, null)
-  })
+    /*
+    |--------------------------------------------------------------------------
+    |   Walking
+    |--------------------------------------------------------------------------
+    |
+    |   Here we walk through all the files and make sure returned file
+    |   should have a name and is a .js file , if conditions are true
+    |   we make a namespace out of their path and store it as a key
+    |   value pair.
+    |
+    */
+    walker.on('file', function (parent, file, next) {
+      const extension = typeof (file.name) !== 'undefined' ? file.name.split('.').pop() : ''
+      if (extension === 'js') {
+        const modulePath = `${parent}/${file.name}`
+        const namespace = modulePath.replace(basePath, rootNamespace).replace('.js', '')
+        hash[namespace] = modulePath
+      }
+      next()
+    })
 
-  /*
-  |--------------------------------------------------------------------------
-  |   On End
-  |--------------------------------------------------------------------------
-  |
-  |   If all was good , call callback and return hash generated while
-  |   walking through the files
-  |
-  */
-  walker.on('end', function () {
-    console.log('ended')
-    cb(null, hash)
-  })
+    /*
+    |--------------------------------------------------------------------------
+    |   On Errors
+    |--------------------------------------------------------------------------
+    |
+    |   When a error event occurs , we simply return the callback saying
+    |   error happened.
+    |
+    */
+    walker.on('errors', function (error) {
+      reject(error)
+    })
 
+    /*
+    |--------------------------------------------------------------------------
+    |   On End
+    |--------------------------------------------------------------------------
+    |
+    |   If all was good , call callback and return hash generated while
+    |   walking through the files
+    |
+    */
+    walker.on('end', function () {
+      resolve(hash)
+    })
+  })
+}
+
+/**
+ * @function save_directory_dump
+ * @description here we simply convert directory map into a string
+ * using JSON.stringify and save it as node module.
+ * @param  {Object} hash
+ * @return {Promise<fulfilled>}
+ */
+Loader.save_directory_dump = function(hash){
+
+  hash = JSON.stringify(hash,null,2)
+  hash = `module.exports = ${hash}`
+
+  return new Promise(function(resolve,reject){
+    fs.writeFile(path.join(__dirname,'../../dump/hash.js'),hash,function(err,done){
+      if(err) reject(err)
+      else resolve()
+    });
+  })
 }
