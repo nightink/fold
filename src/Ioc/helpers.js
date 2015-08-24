@@ -44,9 +44,9 @@ IocHelpers.inject_type_hinted_injections = function (bindings, bindingModule) {
  * @param  {Class} provider
  * @return {Promise<fulfilled>}
  */
-IocHelpers.register_provider = function (provider) {
+IocHelpers.register_provider = function (Provider) {
   return new Promise(function (resolve, reject) {
-    let instance = new provider()
+    let instance = new Provider()
     if (instance.register && typeof (instance.register) === 'function') {
       instance.register()
         .then(resolve)

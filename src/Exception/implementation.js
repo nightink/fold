@@ -2,11 +2,10 @@
 
 /**
  * @module ImplementationException
- * @description makes a new error on
+ * @description makes a new implementation error
  */
 class ImplementationException extends Error {
-
-  constructor( message) {
+  constructor (message) {
     super()
     this.name = 'IMPLEMENTATION_ERROR'
     this.message = message

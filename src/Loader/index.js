@@ -1,7 +1,6 @@
 'use strict'
 
 const LoaderException = require('../Exception/loader')
-const path = require('path')
 const walk = require('walk')
 
 /**
@@ -84,7 +83,7 @@ Loader.resolve_using_type = function (bindings, unresolvedBindings, aliases, dum
  * @param  {String} injection
  * @return {String}
  */
-Loader.return_injection_type = function (bindings, unresolvedBindings , aliases, dump, injection) {
+Loader.return_injection_type = function (bindings, unresolvedBindings, aliases, dump, injection) {
   injection = aliases[injection] || injection
   if (bindings[injection]) {
     return 'PROVIDER'
