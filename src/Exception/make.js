@@ -1,12 +1,12 @@
 'use strict'
 
-class MakeException extends Error{
+class MakeException extends Error {
 
-  constructor(message){
+  constructor( message) {
     super()
     this.name = 'MAKE_EXCEPTION'
     this.message = message
   }
 }
 
-module.exports =  MakeException
+module.exports = MakeException

@@ -60,4 +60,20 @@ describe('Registerar',function(){
     }).catch(done)
   })
 
+  it('should not initiate deferred bindings once done and delete same from unresolvedProviders',function(done){
+
+    let providers = [path.join(__dirname,'./providers/BazProvider')]
+    let deferredProviders = {
+      'App/Bar': path.join(__dirname,'./providers/BarProvider')
+    }
+    Registerar.register(providers,deferredProviders)
+    .then(function(){
+      const Bar = Ioc.use("App/Bar")
+      expect(Bar.bar).to.equal('barbar')
+      expect(Ioc.getUnResolvedProviders()['App/Bar']).to.equal(undefined)
+      done()
+    }).catch(done)
+
+  })
+
 })

@@ -1,8 +1,8 @@
 'use strict'
 
-class LoaderException extends Error{
+class LoaderException extends Error {
 
-  constructor(message){
+  constructor( message) {
     super()
     this.name = 'MISSING_DEPENDENCY'
     this.message = message
@@ -10,5 +10,4 @@ class LoaderException extends Error{
 
 }
 
-
-module.exports =  LoaderException
+module.exports = LoaderException

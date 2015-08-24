@@ -90,9 +90,9 @@ Loader.return_injection_type = function (bindings, unresolvedBindings , aliases,
     return 'PROVIDER'
   }else if (dump[injection]) {
     return 'LOCAL_MODULE'
-  } else if(unresolvedBindings[injection]) {
+  } else if (unresolvedBindings[injection]) {
     return 'UNRESOLVED_PROVIDER'
-  }else {
+  } else {
     return 'NPM_MODULE'
   }
 }
@@ -108,7 +108,7 @@ Loader.return_injection_type = function (bindings, unresolvedBindings , aliases,
  * @param {String} rootNamespace
  * @return {Object}
  */
-Loader.generate_directory_hash = function(directory,basePath,rootNamespace,cb){
+Loader.generate_directory_hash = function (directory, basePath, rootNamespace, cb) {
   const walker = walk.walk(directory)
   let hash = {}
 
@@ -123,11 +123,11 @@ Loader.generate_directory_hash = function(directory,basePath,rootNamespace,cb){
   |   value pair.
   |
   */
-  walker.on('file',function(parent,file,next){
-    const extension = typeof(file.name) !== 'undefined' ? file.name.split('.').pop() : ''
-    if(extension === 'js'){
+  walker.on('file', function (parent, file, next) {
+    const extension = typeof (file.name) !== 'undefined' ? file.name.split('.').pop() : ''
+    if (extension === 'js') {
       const modulePath = `${parent}/${file.name}`
-      const namespace = modulePath.replace(basePath,rootNamespace).replace('.js','')
+      const namespace = modulePath.replace(basePath, rootNamespace).replace('.js', '')
       hash[namespace] = modulePath
     }
     next()
@@ -142,8 +142,8 @@ Loader.generate_directory_hash = function(directory,basePath,rootNamespace,cb){
   |   error happened.
   |
   */
-  walker.on('errors',function(error){
-    cb(error,null)
+  walker.on('errors', function (error) {
+    cb(error, null)
   })
 
   /*
@@ -155,9 +155,9 @@ Loader.generate_directory_hash = function(directory,basePath,rootNamespace,cb){
   |   walking through the files
   |
   */
-  walker.on('end',function(){
+  walker.on('end', function () {
     console.log('ended')
-    cb(null,hash)
+    cb(null, hash)
   })
 
 }

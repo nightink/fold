@@ -20,8 +20,8 @@ let RegisterarHelpers = exports = module.exports = {}
  * @param  {Array} hash
  * @return {Array}
  */
-RegisterarHelpers.require_hash = function(hash){
-  return _.flatten(_.map(hash,function(item){
+RegisterarHelpers.require_hash = function (hash) {
+  return _.flatten(_.map(hash, function (item) {
     return require(item)
   }))
 }
@@ -34,7 +34,7 @@ RegisterarHelpers.require_hash = function(hash){
  * @param  {String} injection
  * @return {*}
  */
-RegisterarHelpers.require_injection = function(injection){
+RegisterarHelpers.require_injection = function (injection) {
   return require(Ioc.getUnResolvedProviders()[injection])
 }
 
@@ -44,9 +44,9 @@ RegisterarHelpers.require_injection = function(injection){
  * container using later method
  * @param  {Object} hash
  */
-RegisterarHelpers.register_deferred = function(hash){
-  _.each(hash,function(item,provides){
-    Ioc.later(provides,item)
+RegisterarHelpers.register_deferred = function (hash) {
+  _.each(hash, function (item, provides) {
+    Ioc.later(provides, item)
   })
 }
 
@@ -56,8 +56,8 @@ RegisterarHelpers.register_deferred = function(hash){
  * all dependencies required by resolved providers.
  * @return {Array}
  */
-RegisterarHelpers.get_injections_for_resolved_providers = function(){
-  return _.flatten(_.map(Ioc.getResolvedProviders(),function(value,key){
+RegisterarHelpers.get_injections_for_resolved_providers = function () {
+  return _.flatten(_.map(Ioc.getResolvedProviders(), function (value, key) {
     return value.injections
   }))
 }
@@ -67,7 +67,7 @@ RegisterarHelpers.get_injections_for_resolved_providers = function(){
  * @description It returns namespaces for all resolved providers so far.
  * @return {Array}
  */
-RegisterarHelpers.get_all_resolved_providers = function(){
+RegisterarHelpers.get_all_resolved_providers = function () {
   return _.keys(Ioc.getResolvedProviders())
 }
 
@@ -76,6 +76,6 @@ RegisterarHelpers.get_all_resolved_providers = function(){
  * @description It returns namespaces for all unresolved providers.
  * @return {Array}
  */
-RegisterarHelpers.get_all_unresolved_providers = function(){
+RegisterarHelpers.get_all_unresolved_providers = function () {
   return _.keys(Ioc.getUnResolvedProviders())
 }
