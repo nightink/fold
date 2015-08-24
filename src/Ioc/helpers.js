@@ -52,7 +52,7 @@ IocHelpers.register_provider = function (Provider) {
       resolve()
       return
     }
-    co(function *(){
+    co(function *() {
       yield instance.register()
     }).then(resolve).catch(reject)
   })
