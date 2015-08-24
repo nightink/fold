@@ -100,10 +100,12 @@ describe('Module Loader', function () {
         return Loader.save_directory_dump(hash)
       })
       .then(function(){
+        let hash = require('../dump/hash.js')
+        expect(hash).to.be.an('object')
+        expect(hash['App/Services/UserService']).to.equal(path.join(__dirname + '/app/Services/UserService.js'))
         done()
       })
       .catch(done)
-
     });
 
   })

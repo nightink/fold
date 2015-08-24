@@ -2,6 +2,7 @@
 
 const _ = require('lodash')
 const helpers = require('./helpers')
+const Loader = require('../Loader')
 const iocHelpers = require('../Ioc/helpers')
 const Q = require('q')
 
@@ -41,4 +42,25 @@ Registerar.stableizeCycle = function () {
     instances = instances.then(iocHelpers.register_provider.bind(null, provider))
   })
   return instances
+}
+
+/**
+ * @function auto load directory
+ * @description Generates directory hash with key/value pairs
+ * where key is the name of the class and value is path to
+ * directory. It only registers es6 classes and functions
+ * @param  {path} directory
+ * @param  {Function} cb
+ * @param {String} basePath
+ * @param {String} rootNamespace
+ * @return {Promise<fulfilled>}
+ */
+Registerar.autoload = function(directory, basePath, rootNamespace){
+  return new Promise(function(resolve,reject){
+    Loader
+    .generate_directory_hash(directory, basePath, rootNamespace)
+    .then(Loader.save_directory_dump)
+    .then(resolve)
+    .then(reject)
+  })
 }
