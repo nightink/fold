@@ -17,78 +17,75 @@ const path = require('path')
 const should = chai.should()
 const expect = chai.expect
 
-describe('Module Loader',function(){
-  describe('Use',function(){
-    it('should throw an LoaderException error when unable to require module',function(){
-      const fn = function(){
+describe('Module Loader', function () {
+  describe('Use', function () {
+    it('should throw an LoaderException error when unable to require module', function () {
+      const fn = function () {
         return Loader.require('somemodule')
       }
       expect(fn).to.throw(LoaderException)
     })
 
-    it('should load module using node require method',function(){
+    it('should load module using node require method', function () {
       const lodash = Loader.require('lodash')
       expect(lodash).to.be.a('function')
       expect(lodash.each).to.be.a('function')
-    });
+    })
 
-    it('should return an error when unable to find module inside containers bindings',function(){
-      const fn = function(){
-        return Loader.resolve({},"App/Db")
+    it('should return an error when unable to find module inside containers bindings', function () {
+      const fn = function () {
+        return Loader.resolve({}, 'App/Db')
       }
       expect(fn).to.throw(LoaderException)
     })
 
-    it('should return injected binding Closure from Ioc container',function(){
-      const binding = function(){ return 'foo' }
+    it('should return injected binding Closure from Ioc container', function () {
+      const binding = function () { return 'foo' }
       const bindings = {'App/Foo': binding}
-      const Foo = Loader.resolve(bindings,'App/Foo')
+      const Foo = Loader.resolve(bindings, 'App/Foo')
       expect(Foo()).to.equal('foo')
     })
 
-    it("should determine type of injection to be fulfilled and fallback to npm module when not find inside container",function(){
-      const module = Loader.return_injection_type({},{},{},{},"lodash")
-      expect(module).to.equal("NPM_MODULE")
-    });
-
-    it("should determine type of injection and get internal mapping if exists inside dump",function(){
-      const module = Loader.return_injection_type({},{},{},{"App/Users":"../../user"},"App/Users")
-      expect(module).to.equal("LOCAL_MODULE")
+    it('should determine type of injection to be fulfilled and fallback to npm module when not find inside container', function () {
+      const module = Loader.return_injection_type({}, {}, {}, {}, 'lodash')
+      expect(module).to.equal('NPM_MODULE')
     })
 
-    it("should determine ioc bindings for a service provider if injection is available inside container's bindings",function(){
-      const binding = function(){ return 'foo' }
-      const module = Loader.return_injection_type({"App/Users":binding},{},{},{},"App/Users")
-      expect(module).to.equal("PROVIDER")
+    it('should determine type of injection and get internal mapping if exists inside dump', function () {
+      const module = Loader.return_injection_type({}, {}, {}, {'App/Users': '../../user'}, 'App/Users')
+      expect(module).to.equal('LOCAL_MODULE')
     })
 
-    it('should resolve binding based upon it\'s type',function(){
+    it("should determine ioc bindings for a service provider if injection is available inside container's bindings", function () {
+      const binding = function () { return 'foo' }
+      const module = Loader.return_injection_type({'App/Users': binding}, {}, {}, {}, 'App/Users')
+      expect(module).to.equal('PROVIDER')
+    })
 
-      const binding = function() { return 'foo' }
-      const bindings = {"App/Foo":binding}
+    it("should resolve binding based upon it's type", function () {
+      const binding = function () { return 'foo' }
+      const bindings = {'App/Foo': binding}
 
-      const type = Loader.return_injection_type(bindings,{},{},{},"App/Foo")
-      const instance = Loader.resolve_using_type(bindings,{},{},{},"App/Foo",type)
+      const type = Loader.return_injection_type(bindings, {}, {}, {}, 'App/Foo')
+      const instance = Loader.resolve_using_type(bindings, {}, {}, {}, 'App/Foo', type)
 
       expect(type).to.equal('PROVIDER')
       expect(instance()).to.equal('foo')
     })
   })
 
-  describe("Load",function(){
-
-    it("should load all files containing functions and classes recursively inside a directory and generate thier namespaces with paths",function(done){
-
-      const basePath = path.join(__dirname,'/app')
+  describe('Load', function () {
+    it('should load all files containing functions and classes recursively inside a directory and generate thier namespaces with paths', function (done) {
+      const basePath = path.join(__dirname, '/app')
       const baseNameSpace = 'App'
 
-      Loader.generate_directory_hash(basePath,basePath,baseNameSpace,function(err,hash){
+      Loader.generate_directory_hash(basePath, basePath, baseNameSpace, function (err, hash) {
         should.not.exist(err)
         expect(hash).to.be.an('object')
-        expect(hash["App/Services/UserService"]).to.equal(path.join(__dirname+'/app/Services/UserService.js'))
+        expect(hash['App/Services/UserService']).to.equal(path.join(__dirname + '/app/Services/UserService.js'))
         done()
-      });
+      })
 
-    });
-  });
+    })
+  })
 })
