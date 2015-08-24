@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "./node_modules/mocha/bin/mocha test"
+    "test": "maketest",
+    "postinstall": "postinstall"
   },
   "author": "",
   "license": "ISC",
@@ -13,6 +14,7 @@
     "ensure.js": "^0.5.3",
     "introspect": "git://github.com/thetutlage/node-introspect.git",
     "lodash": "^3.10.1",
+    "mkdirp": "^0.5.1",
     "q": "^1.4.1",
     "walk": "^2.3.9"
   },
