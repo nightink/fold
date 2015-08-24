@@ -11,7 +11,7 @@
   "dependencies": {
     "co": "^4.6.0",
     "ensure.js": "^0.5.3",
-    "introspect": "0.0.3",
+    "introspect": "git://github.com/thetutlage/node-introspect.git",
     "lodash": "^3.10.1",
     "q": "^1.4.1",
     "walk": "^2.3.9"
