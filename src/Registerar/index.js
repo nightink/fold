@@ -45,7 +45,7 @@ Registerar.stableizeCycle = function () {
 }
 
 /**
- * @function auto load directory
+ * @function autoload
  * @description Generates directory hash with key/value pairs
  * where key is the name of the class and value is path to
  * directory. It only registers es6 classes and functions

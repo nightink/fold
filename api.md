@@ -87,3 +87,43 @@ class CacheServiceProvider extends ServiceProvider{
 
 }
 ```
+
+## Setting up an application
+
+Here i will show you how to setup a simple yet powerful application using fold.
+
+```javascript
+
+  const fold = require('fold')
+  const path = require('path')
+  const Registerar = fold.Registerar
+
+  const appDir = path.join(__dirname,'./app')
+  const appNamespace = 'App'
+
+  const providers = [path.join(__dirname,'./providers/ConfigProvider')]
+
+  // deferred providers are lazy loaded
+  const deferredProviders = {
+    'App/Database' : path.join(__dirname,'./providers/DatabaseProvider')
+  }
+
+  Registerar
+  .register(providers,deferredProviders)
+  .then(function(){
+    Registerar.autoload(appDir,appDir,appNamespace)
+  })
+  .then(function(){
+    // start your server , as DI cycle is stable now
+  }).catch(function(error){
+    throw error
+  });
+```
+
+Now you are good to go and use magic methods like `use` and `make` out of the box.
+
+```javascript
+
+  const UsersController = use("App/Controllers/UsersController")
+
+```
