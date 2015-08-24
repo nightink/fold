@@ -72,7 +72,7 @@ describe('Registerar', function () {
 
   })
 
-  it('should work fine when register method on service provider is a generator <there is a setTimeout on this test>',function(done){
+  it('should work fine when register method on service provider is a generator',function(done){
     let providers = [path.join(__dirname, './providers/GeneratorProvider')]
     Registerar.register(providers,{})
     .then(function(){

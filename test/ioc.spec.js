@@ -150,7 +150,6 @@ describe('Ioc', function () {
 
     Ioc.make('UserController')
       .then(function (instance) {
-        console.log(instance.greet())
         done()
       }).catch(done)
 

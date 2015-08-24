@@ -14,16 +14,7 @@ class GeneratorProvider{
     this.app = Ioc
   }
 
-  promisify(){
-    return new Promise(function(resolve,reject){
-      setTimeout(function(){
-        resolve()
-      },300)
-    })
-  }
-
   *register(){
-    yield this.promisify()
     this.app.bind('App/Generator',function(){
       return new Generator()
     })
