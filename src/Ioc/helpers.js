@@ -2,6 +2,7 @@
 
 const _ = require('lodash')
 const ImplementationException = require('../Exception/implementation')
+const co = require('co')
 
 /**
  * @module IocHelpers
@@ -47,12 +48,12 @@ IocHelpers.inject_type_hinted_injections = function (bindings, bindingModule) {
 IocHelpers.register_provider = function (Provider) {
   return new Promise(function (resolve, reject) {
     let instance = new Provider()
-    if (instance.register && typeof (instance.register) === 'function') {
-      instance.register()
-        .then(resolve)
-        .catch(reject)
-    } else {
+    if (!instance.register || typeof (instance.register) !== 'function') {
       resolve()
+      return
     }
+    co(function *(){
+      yield instance.register()
+    }).then(resolve).catch(reject)
   })
 }
