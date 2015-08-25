@@ -55,6 +55,10 @@ Ioc.bind = function (binding, closure) {
     delete unresolved_providers[binding]
   }
 
+  // here we throw an error if service provider bind implementation
+  // does not returns a closure.
+  helpers.is_verified_as_binding(binding,{closure})
+
   // introspecting injections
   let injections = introspect(closure)
 

@@ -32,9 +32,8 @@ describe('Ioc', function () {
   })
 
   it('should return an error when service provider implementation is not correct', function (done) {
-    Ioc.bind('App/Foo', 'Foo')
     const fn = function () {
-      return Ioc.use('App/Foo')
+      return Ioc.bind('App/Foo', 'Foo')
     }
     expect(fn).to.throw(ImplementationException)
     done()

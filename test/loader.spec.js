@@ -82,6 +82,28 @@ describe('Module Loader', function () {
       expect(type).to.equal('PROVIDER')
       expect(instance()).to.equal('foo')
     })
+
+    it("should detect unresolved bindings", function () {
+      const binding = function () { return 'foo' }
+      const bindings = {'App/Foo': binding}
+
+      const type = Loader.return_injection_type({}, bindings, {}, {}, 'App/Foo')
+      const instance = Loader.resolve_using_type({}, bindings, {}, {}, 'App/Foo', type)
+
+      expect(type).to.equal('UNRESOLVED_PROVIDER')
+      expect(instance()).to.equal('foo')
+    })
+
+    it('should throw an error when resolving module does not fall into any category',function(){
+
+      const fn = function(){
+        return Loader.resolve_using_type({},{},{},'App/Foo',null)
+      }
+
+      expect(fn).to.throw(LoaderException)
+
+    })
+
   })
 
   describe('Load', function () {
