@@ -49,8 +49,7 @@ IocHelpers.register_provider = function (Provider) {
   return new Promise(function (resolve, reject) {
     let instance = new Provider()
     if (!instance.register || typeof (instance.register) !== 'function') {
-      resolve()
-      return
+      return resolve()
     }
     co(function *() {
       yield instance.register()

@@ -209,8 +209,8 @@ Ioc.make = function (binding) {
 
     // if trying to make a instance of something that is not a class , neither
     // a binding
-    if (typeof (binding) !== 'string' && typeof (binding.constructor) !== 'function') {
-      reject(new MakeException(`unable to make ${binding} ,looking for a class defination or ioc container namespace`))
+    if (typeof (binding) !== 'string' && (typeof(binding) !== 'function' || typeof (binding.constructor) !== 'function')) {
+      throw new MakeException(`unable to make ${binding} ,looking for a class defination or ioc container namespace`)
     }
 
     /**
@@ -236,7 +236,7 @@ Ioc.make = function (binding) {
           case 'UNRESOLVED_PROVIDER':
             return Ioc._makeProvider(resolved_providers[binding])
           case 'NPM_MODULE':
-            return new Promise(function (resolve) { resolve(Ioc.use(binding)) })
+            return new Promise(function (resolve) { resolve() })
           case 'LOCAL_MODULE':
             return Ioc._makeClass(Ioc.use(binding))
           default:

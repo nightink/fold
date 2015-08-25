@@ -11,16 +11,24 @@
 */
 
 const Ioc = require('../src/Ioc')
+const IocHelpers = require('../src/Ioc/helpers')
 const ImplementationException = require('../src/Exception/implementation')
 const LoaderException = require('../src/Exception/loader')
+const MakeException = require('../src/Exception/make')
 const chai = require('chai')
 const path = require('path')
 const should = chai.should()
 const expect = chai.expect
 
 describe('Ioc', function () {
+
+  beforeEach(function(){
+    console.time("test");
+  })
+
   afterEach(function () {
     Ioc.clear()
+    console.timeEnd("test");
   })
 
   it('should return an error when service provider implementation is not correct', function (done) {
@@ -40,6 +48,32 @@ describe('Ioc', function () {
     })
     const foo = Ioc.use('App/Foo')
     expect(foo).to.be.an.instanceof(Foo)
+  })
+
+  it('should add providers to the list of deferred providers , when they have been registed via later method',function(){
+    const providerPath = path.join(__dirname,'./providers/AppProvider.js')
+    Ioc.later('App/Deferred',providerPath)
+    expect(Ioc.getUnResolvedProviders()['App/Deferred']).to.equal(providerPath)
+  })
+
+  it('should throw ImplementationException when trying to use unresolved provider',function(){
+    const providerPath = path.join(__dirname,'./providers/AppProvider.js')
+    Ioc.later('App/Deferred',providerPath)
+    const fn = function () {
+      return Ioc.use('App/Deferred')
+    }
+    expect(fn).to.throw(ImplementationException)
+  })
+
+  it('should inspect provider Closure to build dependency tree',function(){
+
+    class Baz{}
+    Ioc.bind('App/Baz',function(App_Foo){
+      return new Baz()
+    })
+    const bazObject = Ioc.getResolvedProviders()['App/Baz']
+    expect(bazObject.injections).to.deep.equal(['App/Foo'])
+
   })
 
   it('should resolve node modules', function () {
@@ -141,6 +175,23 @@ describe('Ioc', function () {
       }).catch(done)
   })
 
+  it('should throw an error when trying to make unregistered binding',function(done){
+    Ioc.make("Foo")
+    .catch(function(error){
+      expect(error).to.be.an.instanceof(LoaderException)
+      done()
+    })
+  });
+
+  it('should throw an error when trying to make a variable which is not a valid class',function(done){
+    var Foo = {}
+    Ioc.make(Foo)
+    .catch(function(error){
+      expect(error).to.be.an.instanceof(MakeException)
+      done()
+    })
+  })
+
   it('should make a class with class defination , which has dependency on another class , and another class has circular dependencies on deferred and resolved providers', function (done) {
     Ioc.later('App/Database', path.join(__dirname, './providers/app/providers/DatabaseProvider'))
     Ioc.later('App/Config', path.join(__dirname, './providers/app/providers/ConfigProvider'))
@@ -152,6 +203,22 @@ describe('Ioc', function () {
       .then(function (instance) {
         done()
       }).catch(done)
+  })
+
+  describe("Ioc Helpers",function(){
+
+    it('should register a provider with class defination even if there is no register method',function(done){
+
+      class FooProvider {
+
+      }
+
+      IocHelpers
+      .register_provider(FooProvider)
+      .then(done).catch(done)
+
+
+    });
 
   })
 

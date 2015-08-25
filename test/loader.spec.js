@@ -18,6 +18,16 @@ const should = chai.should()
 const expect = chai.expect
 
 describe('Module Loader', function () {
+
+  beforeEach(function(){
+    console.time("test");
+  })
+
+  afterEach(function () {
+    console.timeEnd("test");
+  })
+
+
   describe('Use', function () {
     it('should throw an LoaderException error when unable to require module', function () {
       const fn = function () {

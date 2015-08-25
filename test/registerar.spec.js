@@ -18,8 +18,14 @@ const should = chai.should()
 const expect = chai.expect
 
 describe('Registerar', function () {
+
+  beforeEach(function(){
+    console.time("test");
+  })
+
   afterEach(function () {
     Ioc.clear()
+    console.timeEnd("test");
   })
 
   it('should inject required service providers inside the ioc container', function (done) {
