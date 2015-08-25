@@ -113,8 +113,7 @@ Loader.generate_directory_hash = function (directory, basePath, rootNamespace) {
   const walker = walk.walk(directory)
   let hash = {}
 
-  return new Promise(function(resolve,reject){
-
+  return new Promise(function (resolve, reject) {
     /*
     |--------------------------------------------------------------------------
     |   Walking
@@ -171,15 +170,14 @@ Loader.generate_directory_hash = function (directory, basePath, rootNamespace) {
  * @param  {Object} hash
  * @return {Promise<fulfilled>}
  */
-Loader.save_directory_dump = function(hash){
-
-  hash = JSON.stringify(hash,null,2)
+Loader.save_directory_dump = function (hash) {
+  hash = JSON.stringify(hash, null, 2)
   hash = `module.exports = ${hash}`
 
-  return new Promise(function(resolve,reject){
-    fs.writeFile(path.join(__dirname,'../../dump/hash.js'),hash,function(err,done){
-      if(err) reject(err)
+  return new Promise(function (resolve, reject) {
+    fs.writeFile(path.join(__dirname, '../../dump/hash.js'), hash, function (err, done) {
+      if (err) reject(err)
       else resolve()
-    });
+    })
   })
 }

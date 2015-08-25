@@ -2,7 +2,6 @@
 
 const _ = require('lodash')
 const Ioc = require('../Ioc')
-const LoaderException = require('../Exception/loader')
 
 /**
  * @module RegisterarHelpers

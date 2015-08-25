@@ -55,12 +55,12 @@ Registerar.stableizeCycle = function () {
  * @param {String} rootNamespace
  * @return {Promise<fulfilled>}
  */
-Registerar.autoload = function(directory, basePath, rootNamespace){
-  return new Promise(function(resolve,reject){
+Registerar.autoload = function (directory, basePath, rootNamespace) {
+  return new Promise(function (resolve, reject) {
     Loader
-    .generate_directory_hash(directory, basePath, rootNamespace)
-    .then(Loader.save_directory_dump)
-    .then(resolve)
-    .then(reject)
+      .generate_directory_hash(directory, basePath, rootNamespace)
+      .then(Loader.save_directory_dump)
+      .then(resolve)
+      .then(reject)
   })
 }

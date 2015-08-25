@@ -57,7 +57,7 @@ Ioc.bind = function (binding, closure) {
 
   // here we throw an error if service provider bind implementation
   // does not returns a closure.
-  helpers.is_verified_as_binding(binding,{closure})
+  helpers.is_verified_as_binding(binding, {closure})
 
   // introspecting injections
   let injections = introspect(closure)
@@ -213,7 +213,7 @@ Ioc.make = function (binding) {
 
     // if trying to make a instance of something that is not a class , neither
     // a binding
-    if (typeof (binding) !== 'string' && (typeof(binding) !== 'function' || typeof (binding.constructor) !== 'function')) {
+    if (typeof (binding) !== 'string' && (typeof (binding) !== 'function' || typeof (binding.constructor) !== 'function')) {
       throw new MakeException(`unable to make ${binding} ,looking for a class defination or ioc container namespace`)
     }
 
