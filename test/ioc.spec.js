@@ -204,21 +204,35 @@ describe('Ioc', function () {
       }).catch(done)
   })
 
-  describe("Ioc Helpers",function(){
+  it('should bind providers as singleton and return the same instance every time',function(done){
 
-    it('should register a provider with class defination even if there is no register method',function(done){
-
-      class FooProvider {
-
+    class Timer{
+      constructor(){
+        this.currentTime = new Date()
       }
+    }
 
+    Ioc.singleton('Timer',function(){
+      return new Timer()
+    })
+
+    const timer1 = Ioc.use("Timer")
+    setTimeout(function(){
+      const timer2 = Ioc.use("Timer")
+      expect(timer2.currentTime).to.equal(timer1.currentTime)
+      done()
+    },1000);
+
+  });
+
+  describe("Ioc Helpers",function(){
+    it('should register a provider with class defination even if there is no register method',function(done){
+      class FooProvider {
+      }
       IocHelpers
       .register_provider(FooProvider)
       .then(done).catch(done)
-
-
     });
-
   })
 
 })

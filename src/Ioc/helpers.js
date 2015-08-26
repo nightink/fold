@@ -3,6 +3,7 @@
 const _ = require('lodash')
 const ImplementationException = require('../Exception/implementation')
 const co = require('co')
+const introspect = require('introspect')
 
 /**
  * @module IocHelpers
@@ -55,4 +56,28 @@ IocHelpers.register_provider = function (Provider) {
       yield instance.register()
     }).then(resolve).catch(reject)
   })
+}
+
+IocHelpers.bind_provider = function(resolved_providers,unresolved_providers,binding,closure,singleton){
+  // removing from unresolved if it was
+  // deferred.
+  if (unresolved_providers[binding]) {
+    delete unresolved_providers[binding]
+  }
+
+  // here we throw an error if service provider bind implementation
+  // does not returns a closure.
+  IocHelpers.is_verified_as_binding(binding, {closure})
+
+  // introspecting injections
+  let injections = introspect(closure)
+
+  // converting underscored dependencies to
+  // namespces
+  injections = _.map(injections, function (injection) {
+    return injection.replace(/_/g, '/')
+  })
+
+  // adding to resolved providers
+  resolved_providers[binding] = {closure, injections, singleton}
 }

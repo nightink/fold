@@ -49,27 +49,13 @@ let Ioc = exports = module.exports = {}
  * @return {void}
  */
 Ioc.bind = function (binding, closure) {
-  // removing from unresolved if it was
-  // deferred.
-  if (unresolved_providers[binding]) {
-    delete unresolved_providers[binding]
-  }
+  const singleton = false
+  helpers.bind_provider(resolved_providers,unresolved_providers,binding,closure,singleton)
+}
 
-  // here we throw an error if service provider bind implementation
-  // does not returns a closure.
-  helpers.is_verified_as_binding(binding, {closure})
-
-  // introspecting injections
-  let injections = introspect(closure)
-
-  // converting underscored dependencies to
-  // namespces
-  injections = _.map(injections, function (injection) {
-    return injection.replace(/_/g, '/')
-  })
-
-  // adding to resolved providers
-  resolved_providers[binding] = {closure, injections}
+Ioc.singleton = function(binding,closure){
+  const singleton = true
+  helpers.bind_provider(resolved_providers,unresolved_providers,binding,closure,singleton)
 }
 
 /**
@@ -175,6 +161,12 @@ Ioc.use = function (binding) {
     injections = _.map(injections, function (injection, index) {
       return Ioc.use(index)
     })
+    if(bindingModule.singleton){
+      if(!bindingModule.instance){
+        bindingModule.instance = bindingModule.closure.apply(null, injections)
+      }
+      return bindingModule.instance
+    }
     return bindingModule.closure.apply(null, injections)
   }
 
