@@ -5,4 +5,4 @@ function ServiceProvider(){
   this.app = Ioc
 }
 
-module.exports = Ioc
+module.exports = ServiceProvider

@@ -24,7 +24,7 @@ Loader.require = function (module) {
   try {
     return require(module)
   } catch(e) {
-    throw new LoaderException(`Unable to require module ${module}`)
+    throw e
   }
 }
 

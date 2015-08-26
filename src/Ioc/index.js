@@ -32,6 +32,12 @@ let unresolved_providers = {}
 let aliases = {}
 let dump = {}
 
+try{
+  dump = require('../../dump/hash')
+}catch(e){
+  dump = {}
+}
+
 /**
  * @module Ioc
  * @description Ioc is responsible for DI around your
@@ -149,7 +155,7 @@ Ioc.use = function (binding) {
 
   // if looking for unresolved provider , send them back with an error
   if (type === 'UNRESOLVED_PROVIDER') {
-    throw new ImplementationException(`${binding} is a unresolved provider , use make function to get resolved instance`)
+    throw new ImplementationException(`${binding} is a unresolved provider , use \`make\` function to get resolved instance`)
   }
 
   // here we grab that binding using it's type
