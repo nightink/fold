@@ -29,11 +29,11 @@ describe('Module Loader', function () {
 
 
   describe('Use', function () {
-    it('should throw an LoaderException error when unable to require module', function () {
+    it('should throw an error when unable to require module', function () {
       const fn = function () {
         return Loader.require('somemodule')
       }
-      expect(fn).to.throw(LoaderException)
+      expect(fn).to.throw(Error)
     })
 
     it('should load module using node require method', function () {

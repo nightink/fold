@@ -85,7 +85,7 @@ describe('Ioc', function () {
     const fn = function () {
       return Ioc.use('./app/Services/UserService')
     }
-    expect(fn).to.throw(LoaderException)
+    expect(fn).to.throw(Error)
   })
 
   it('should resolve providers using aliases', function () {
@@ -177,7 +177,7 @@ describe('Ioc', function () {
   it('should throw an error when trying to make unregistered binding',function(done){
     Ioc.make("Foo")
     .catch(function(error){
-      expect(error).to.be.an.instanceof(LoaderException)
+      expect(error).to.be.an.instanceof(Error)
       done()
     })
   });
