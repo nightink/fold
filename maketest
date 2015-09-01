@@ -1,7 +1,7 @@
 const path = require('path')
 const exec = require('child_process').exec
 
-exec(`${path.normalize('./node_modules/mocha/bin/mocha')} test`,function(error, stdout, stderr){
+exec(`${path.normalize('./node_modules/.bin/_mocha')} test`,function(error, stdout, stderr){
   if(error){
     console.log(error.stack)
     process.exit(1)
