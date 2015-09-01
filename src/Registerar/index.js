@@ -56,7 +56,6 @@ Registerar.stableizeCycle = function () {
  * @return {Promise<fulfilled>}
  */
 Registerar.autoload = function (directory, basePath, rootNamespace) {
-  process.env.foldNamespace = rootNamespace
   return new Promise(function (resolve, reject) {
     Loader
       .generate_directory_hash(directory, basePath, rootNamespace)
