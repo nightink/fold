@@ -75,6 +75,37 @@ describe('Ioc', function () {
 
   })
 
+  it('should make use of static inject property over class constructor while making classes',function(done){
+
+    class Foo{
+      constructor(){
+        this.foo = "boom"
+      }
+    }
+
+    Ioc.bind('App/Foo',function(){
+      return new Foo()
+    })
+
+    class Baz{
+      static get inject(){
+        return ["App/Foo"]
+      }
+      constructor(Foo){
+        this.foo = Foo.foo
+      }
+    }
+
+    Ioc
+    .make(Baz)
+    .then(function(instance){
+      expect(instance.foo).to.equal("boom")
+      done()
+    }).catch(done)
+
+  })
+
+
   it('should resolve node modules', function () {
     const _ = Ioc.use('lodash')
     expect(_).to.be.a('function')
@@ -99,8 +130,9 @@ describe('Ioc', function () {
   })
 
   it('should make a class with class defination and zero injections', function (done) {
+
     class User {
-      constructor() {
+      constructor(){
         this.name = 'foo'
       }
     }

@@ -1,7 +1,7 @@
 'use strict'
 
 const Loader = require('../Loader/index')
-const introspect = require('introspect')
+const introspect = require('../../utils/introspect')
 const MakeException = require('../Exception/make')
 const ImplementationException = require('../Exception/implementation')
 const helpers = require('./helpers')
@@ -281,20 +281,34 @@ Ioc._makeProvider = function (provider) {
 Ioc._makeClass = function (Binding) {
   let _bind = Function.prototype.bind
   return new Promise(function (resolve, reject) {
-    let injections = introspect(Binding.toString())
+
+    let injections = []
     let instances = Q()
+
+    /**
+     * if class has a inject method use it , otherwise
+     * make it by reading constructor
+     */
+    if(Binding.inject){
+      injections = Binding.inject
+    }else{
+      injections = introspect.inspect(Binding.toString())
+    }
+
     if (injections && _.size(injections) > 0) {
-      injections = _.map(injections, function (item) {
-        return item.replace(/_/g, '/')
-      })
+
       injections.forEach(function (injection) {
+        injection = injection.replace(/_/g, '/')
         instances = instances.then(Ioc.make.bind(null, injection))
       })
+
       instances.then(function (values) {
         resolve(new (_bind.apply(Binding, [null].concat(values)))())
       }).catch(reject)
+
     } else {
       resolve(new Binding())
     }
+
   })
 }

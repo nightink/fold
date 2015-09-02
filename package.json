@@ -5,15 +5,14 @@
   "main": "index.js",
   "scripts": {
     "test": "node maketest",
-    "postinstall": "node postinstall"
+    "postinstall": "node postinstall",
+    "coverage": "node makecoverage"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "co": "^4.6.0",
-    "introspect": "git://github.com/thetutlage/node-introspect.git",
     "lodash": "^3.10.1",
-    "mkdirp": "^0.5.1",
     "q": "^1.4.1",
     "walk": "^2.3.9"
   },
