@@ -257,6 +257,49 @@ describe('Ioc', function () {
 
   });
 
+  it('should make use of static injections over provider callback typehiniting',function(done){
+
+    class Foo{
+      constructor(bar){
+        this.greet = bar.greet
+      }
+    }
+
+    class Bar{
+      constructor(){
+        this.greet = 'hello'
+      }
+    }
+
+    Ioc.bind('App/Bar',function(){
+      return new Bar();
+    })
+
+    class FooProvider{
+
+      static get inject(){
+        return ["App/Bar"]
+      }
+
+      *register(){
+        Ioc.bind('App/Foo', function (bar){
+          return new Foo(bar)
+        })
+      }
+    }
+
+
+    IocHelpers
+    .register_provider(FooProvider)
+    .then(function(){
+      const FooInstance = Ioc.use("App/Foo")
+      expect(FooInstance.greet).to.equal('hello')
+      done()
+    }).catch(done)
+
+
+  })
+
   describe("Ioc Helpers",function(){
     it('should register a provider with class defination even if there is no register method',function(done){
       class FooProvider {

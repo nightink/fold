@@ -5,6 +5,8 @@ const ImplementationException = require('../Exception/implementation')
 const co = require('co')
 const introspect = require('../../utils/introspect')
 
+let staticInjections = []
+
 /**
  * @module IocHelpers
  * @description Helpers for Ioc container
@@ -48,6 +50,10 @@ IocHelpers.inject_type_hinted_injections = function (bindings, bindingModule) {
  */
 IocHelpers.register_provider = function (Provider) {
   return new Promise(function (resolve, reject) {
+    if(Provider.inject){
+      staticInjections = Provider.inject
+    }
+
     let instance = new Provider()
     if (!instance.register || typeof (instance.register) !== 'function') {
       return resolve()
@@ -79,14 +85,17 @@ IocHelpers.bind_provider = function(resolved_providers,unresolved_providers,bind
   // does not returns a closure.
   IocHelpers.is_verified_as_binding(binding, {closure})
 
-  // introspecting injections
-  let injections = introspect.inspect(closure)
+  // introspecting injections or use static injections , if there
+  let injections = staticInjections.length ? staticInjections : introspect.inspect(closure)
 
   // converting underscored dependencies to
   // namespces
   injections = _.map(injections, function (injection) {
     return injection.replace(/_/g, '/')
   })
+
+  // clear staticInjections once have injections in place
+  staticInjections = []
 
   // adding to resolved providers
   resolved_providers[binding] = {closure, injections, singleton}
