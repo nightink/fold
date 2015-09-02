@@ -1,6 +1,6 @@
 'use strict'
 
-const argumentsRegExp = /(constructor|function)\w*\s*\(([\s\S]*?)\)/;
+const argumentsRegExp = /(constructor|^function)\w*\s*\(([\s\S]*?)\)/;
 const replaceRegExp = /[ ,\n\r\t]+/;
 
 /**
