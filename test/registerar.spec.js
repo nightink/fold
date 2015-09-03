@@ -88,4 +88,17 @@ describe('Registerar', function () {
     }).catch(done)
   })
 
+  it('should autoload a given directory and register mappings inside Ioc container' , function (done) {
+
+    const appDir = path.join(__dirname,'./app')
+
+    Registerar
+    .autoload(appDir,appDir,'Dazzle')
+    .then(function (){
+      expect(Ioc.use("Dazzle/Http/Users")).to.be.a('function')
+      done()
+    }).catch(done)
+
+  })
+
 })

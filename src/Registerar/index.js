@@ -3,6 +3,7 @@
 const _ = require('lodash')
 const helpers = require('./helpers')
 const Loader = require('../Loader')
+const Ioc = require('../Ioc')
 const iocHelpers = require('../Ioc/helpers')
 const Q = require('q')
 
@@ -56,6 +57,32 @@ Registerar.stableizeCycle = function () {
  * @return {Promise<fulfilled>}
  */
 Registerar.autoload = function (directory, basePath, rootNamespace) {
+  return new Promise(function (resolve, reject) {
+    Loader
+      .generate_directory_hash(directory, basePath, rootNamespace)
+      .then(function(hash){
+        _.each(hash, function (item,index) {
+          Ioc.dump(index,item)
+        })
+        resolve()
+      })
+      .then(reject)
+  })
+}
+
+
+/**
+ * @function dump
+ * @description Generates directory hash with key/value pairs
+ * where key is the name of the class and value is path to
+ * directory and dumps it to a given file.
+ * @param  {path} directory
+ * @param  {Function} cb
+ * @param {String} basePath
+ * @param {String} rootNamespace
+ * @return {Promise<fulfilled>}
+ */
+Registerar.dump = function (directory, basePath, rootNamespace) {
   return new Promise(function (resolve, reject) {
     Loader
       .generate_directory_hash(directory, basePath, rootNamespace)
