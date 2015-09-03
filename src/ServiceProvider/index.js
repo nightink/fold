@@ -1,7 +1,7 @@
 'use strict'
 
 const Ioc = require('../Ioc')
-function ServiceProvider(){
+function ServiceProvider () {
   this.app = Ioc
 }
 

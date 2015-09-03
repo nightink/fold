@@ -32,9 +32,9 @@ let unresolved_providers = {}
 let aliases = {}
 let dump = {}
 
-try{
+try {
   dump = require('../../dump/hash')
-}catch(e){
+} catch(e) {
   dump = {}
 }
 
@@ -56,12 +56,12 @@ let Ioc = exports = module.exports = {}
  */
 Ioc.bind = function (binding, closure) {
   const singleton = false
-  helpers.bind_provider(resolved_providers,unresolved_providers,binding,closure,singleton)
+  helpers.bind_provider(resolved_providers, unresolved_providers, binding, closure, singleton)
 }
 
-Ioc.singleton = function(binding,closure){
+Ioc.singleton = function (binding, closure) {
   const singleton = true
-  helpers.bind_provider(resolved_providers,unresolved_providers,binding,closure,singleton)
+  helpers.bind_provider(resolved_providers, unresolved_providers, binding, closure, singleton)
 }
 
 /**
@@ -167,8 +167,8 @@ Ioc.use = function (binding) {
     injections = _.map(injections, function (injection, index) {
       return Ioc.use(index)
     })
-    if(bindingModule.singleton){
-      if(!bindingModule.instance){
+    if (bindingModule.singleton) {
+      if (!bindingModule.instance) {
         bindingModule.instance = bindingModule.closure.apply(null, injections)
       }
       return bindingModule.instance
@@ -281,7 +281,6 @@ Ioc._makeProvider = function (provider) {
 Ioc._makeClass = function (Binding) {
   let _bind = Function.prototype.bind
   return new Promise(function (resolve, reject) {
-
     let injections = []
     let instances = Q()
 
@@ -289,14 +288,13 @@ Ioc._makeClass = function (Binding) {
      * if class has a inject method use it , otherwise
      * make it by reading constructor
      */
-    if(Binding.inject){
+    if (Binding.inject) {
       injections = Binding.inject
-    }else{
+    } else {
       injections = introspect.inspect(Binding.toString())
     }
 
     if (injections && _.size(injections) > 0) {
-
       injections.forEach(function (injection) {
         injection = injection.replace(/_/g, '/')
         instances = instances.then(Ioc.make.bind(null, injection))

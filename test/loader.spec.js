@@ -14,19 +14,16 @@ const Loader = require('../src/Loader')
 const LoaderException = require('../src/Exception/loader')
 const chai = require('chai')
 const path = require('path')
-const should = chai.should()
 const expect = chai.expect
 
 describe('Module Loader', function () {
-
-  beforeEach(function(){
-    console.time("test");
+  beforeEach(function () {
+    console.time('test')
   })
 
   afterEach(function () {
-    console.timeEnd("test");
+    console.timeEnd('test')
   })
-
 
   describe('Use', function () {
     it('should throw an error when unable to require module', function () {
@@ -83,7 +80,7 @@ describe('Module Loader', function () {
       expect(instance()).to.equal('foo')
     })
 
-    it("should detect unresolved bindings", function () {
+    it('should detect unresolved bindings', function () {
       const binding = function () { return 'foo' }
       const bindings = {'App/Foo': binding}
 
@@ -94,10 +91,9 @@ describe('Module Loader', function () {
       expect(instance()).to.equal('foo')
     })
 
-    it('should throw an error when resolving module does not fall into any category',function(){
-
-      const fn = function(){
-        return Loader.resolve_using_type({},{},{},'App/Foo',null)
+    it('should throw an error when resolving module does not fall into any category', function () {
+      const fn = function () {
+        return Loader.resolve_using_type({}, {}, {}, 'App/Foo', null)
       }
 
       expect(fn).to.throw(LoaderException)
@@ -112,33 +108,31 @@ describe('Module Loader', function () {
       const baseNameSpace = 'App'
 
       Loader.generate_directory_hash(basePath, basePath, baseNameSpace)
-      .then(function(hash){
-        expect(hash).to.be.an('object')
-        expect(hash['App/Services/UserService']).to.equal(path.join(__dirname + '/app/Services/UserService.js'))
-        done()
-      }).catch(done)
+        .then(function (hash) {
+          expect(hash).to.be.an('object')
+          expect(hash['App/Services/UserService']).to.equal(path.join(__dirname + '/app/Services/UserService.js'))
+          done()
+        }).catch(done)
     })
 
-    it('should save generated hash inside a file as a node module', function(done){
-
+    it('should save generated hash inside a file as a node module', function (done) {
       const basePath = path.join(__dirname, '/app')
       const baseNameSpace = 'App'
 
-
       Loader.generate_directory_hash(basePath, basePath, baseNameSpace)
-      .then(function(hash){
-        expect(hash).to.be.an('object')
-        expect(hash['App/Services/UserService']).to.equal(path.join(__dirname + '/app/Services/UserService.js'))
-        return Loader.save_directory_dump(hash)
-      })
-      .then(function(){
-        let hash = require('../dump/hash.js')
-        expect(hash).to.be.an('object')
-        expect(hash['App/Services/UserService']).to.equal(path.join(__dirname + '/app/Services/UserService.js'))
-        done()
-      })
-      .catch(done)
-    });
+        .then(function (hash) {
+          expect(hash).to.be.an('object')
+          expect(hash['App/Services/UserService']).to.equal(path.join(__dirname + '/app/Services/UserService.js'))
+          return Loader.save_directory_dump(hash)
+        })
+        .then(function () {
+          let hash = require('../dump/hash.js')
+          expect(hash).to.be.an('object')
+          expect(hash['App/Services/UserService']).to.equal(path.join(__dirname + '/app/Services/UserService.js'))
+          done()
+        })
+        .catch(done)
+    })
 
   })
 })

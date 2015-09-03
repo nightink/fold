@@ -60,16 +60,15 @@ Registerar.autoload = function (directory, basePath, rootNamespace) {
   return new Promise(function (resolve, reject) {
     Loader
       .generate_directory_hash(directory, basePath, rootNamespace)
-      .then(function(hash){
-        _.each(hash, function (item,index) {
-          Ioc.dump(index,item)
+      .then(function (hash) {
+        _.each(hash, function (item, index) {
+          Ioc.dump(index, item)
         })
         resolve()
       })
       .then(reject)
   })
 }
-
 
 /**
  * @function dump

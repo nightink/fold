@@ -14,18 +14,16 @@ const Registerar = require('../src/Registerar')
 const Ioc = require('../src/Ioc')
 const chai = require('chai')
 const path = require('path')
-const should = chai.should()
 const expect = chai.expect
 
 describe('Registerar', function () {
-
-  beforeEach(function(){
-    console.time("test");
+  beforeEach(function () {
+    console.time('test')
   })
 
   afterEach(function () {
     Ioc.clear()
-    console.timeEnd("test");
+    console.timeEnd('test')
   })
 
   it('should inject required service providers inside the ioc container', function (done) {
@@ -78,26 +76,25 @@ describe('Registerar', function () {
 
   })
 
-  it('should work fine when register method on service provider is a generator',function(done){
+  it('should work fine when register method on service provider is a generator', function (done) {
     let providers = [path.join(__dirname, './providers/GeneratorProvider')]
-    Registerar.register(providers,{})
-    .then(function(){
-      const Generator = Ioc.use("App/Generator")
-      expect(Generator.foo).to.equal('foo')
-      done()
-    }).catch(done)
+    Registerar.register(providers, {})
+      .then(function () {
+        const Generator = Ioc.use('App/Generator')
+        expect(Generator.foo).to.equal('foo')
+        done()
+      }).catch(done)
   })
 
-  it('should autoload a given directory and register mappings inside Ioc container' , function (done) {
-
-    const appDir = path.join(__dirname,'./app')
+  it('should autoload a given directory and register mappings inside Ioc container', function (done) {
+    const appDir = path.join(__dirname, './app')
 
     Registerar
-    .autoload(appDir,appDir,'Dazzle')
-    .then(function (){
-      expect(Ioc.use("Dazzle/Http/Users")).to.be.a('function')
-      done()
-    }).catch(done)
+      .autoload(appDir, appDir, 'Dazzle')
+      .then(function () {
+        expect(Ioc.use('Dazzle/Http/Users')).to.be.a('function')
+        done()
+      }).catch(done)
 
   })
 

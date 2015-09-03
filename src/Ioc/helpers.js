@@ -50,7 +50,7 @@ IocHelpers.inject_type_hinted_injections = function (bindings, bindingModule) {
  */
 IocHelpers.register_provider = function (Provider) {
   return new Promise(function (resolve, reject) {
-    if(Provider.inject){
+    if (Provider.inject) {
       staticInjections = Provider.inject
     }
 
@@ -74,7 +74,7 @@ IocHelpers.register_provider = function (Provider) {
  * @param  {Boolean} singleton
  * @return {Object}
  */
-IocHelpers.bind_provider = function(resolved_providers,unresolved_providers,binding,closure,singleton){
+IocHelpers.bind_provider = function (resolved_providers, unresolved_providers, binding, closure, singleton) {
   // removing from unresolved if it was
   // deferred.
   if (unresolved_providers[binding]) {

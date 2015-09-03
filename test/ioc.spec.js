@@ -13,22 +13,19 @@
 const Ioc = require('../src/Ioc')
 const IocHelpers = require('../src/Ioc/helpers')
 const ImplementationException = require('../src/Exception/implementation')
-const LoaderException = require('../src/Exception/loader')
 const MakeException = require('../src/Exception/make')
 const chai = require('chai')
 const path = require('path')
-const should = chai.should()
 const expect = chai.expect
 
 describe('Ioc', function () {
-
-  beforeEach(function(){
-    console.time("test");
+  beforeEach(function () {
+    console.time('test')
   })
 
   afterEach(function () {
     Ioc.clear()
-    console.timeEnd("test");
+    console.timeEnd('test')
   })
 
   it('should return an error when service provider implementation is not correct', function (done) {
@@ -49,25 +46,25 @@ describe('Ioc', function () {
     expect(foo).to.be.an.instanceof(Foo)
   })
 
-  it('should add providers to the list of deferred providers , when they have been registed via later method',function(){
-    const providerPath = path.join(__dirname,'./providers/AppProvider.js')
-    Ioc.later('App/Deferred',providerPath)
+  it('should add providers to the list of deferred providers , when they have been registed via later method', function () {
+    const providerPath = path.join(__dirname, './providers/AppProvider.js')
+    Ioc.later('App/Deferred', providerPath)
     expect(Ioc.getUnResolvedProviders()['App/Deferred']).to.equal(providerPath)
   })
 
-  it('should throw ImplementationException when trying to use unresolved provider',function(){
-    const providerPath = path.join(__dirname,'./providers/AppProvider.js')
-    Ioc.later('App/Deferred',providerPath)
+  it('should throw ImplementationException when trying to use unresolved provider', function () {
+    const providerPath = path.join(__dirname, './providers/AppProvider.js')
+    Ioc.later('App/Deferred', providerPath)
     const fn = function () {
       return Ioc.use('App/Deferred')
     }
     expect(fn).to.throw(ImplementationException)
   })
 
-  it('should inspect provider Closure to build dependency tree',function(){
-
-    class Baz{}
-    Ioc.bind('App/Baz',function(App_Foo){
+  it('should inspect provider Closure to build dependency tree', function () {
+    class Baz {
+    }
+    Ioc.bind('App/Baz', function (App_Foo) {
       return new Baz()
     })
     const bazObject = Ioc.getResolvedProviders()['App/Baz']
@@ -75,36 +72,34 @@ describe('Ioc', function () {
 
   })
 
-  it('should make use of static inject property over class constructor while making classes',function(done){
-
-    class Foo{
-      constructor(){
-        this.foo = "boom"
+  it('should make use of static inject property over class constructor while making classes', function (done) {
+    class Foo {
+      constructor () {
+        this.foo = 'boom'
       }
     }
 
-    Ioc.bind('App/Foo',function(){
+    Ioc.bind('App/Foo', function () {
       return new Foo()
     })
 
-    class Baz{
-      static get inject(){
-        return ["App/Foo"]
+    class Baz {
+      static get inject () {
+        return ['App/Foo']
       }
-      constructor(Foo){
+      constructor (Foo) {
         this.foo = Foo.foo
       }
     }
 
     Ioc
-    .make(Baz)
-    .then(function(instance){
-      expect(instance.foo).to.equal("boom")
-      done()
-    }).catch(done)
+      .make(Baz)
+      .then(function (instance) {
+        expect(instance.foo).to.equal('boom')
+        done()
+      }).catch(done)
 
   })
-
 
   it('should resolve node modules', function () {
     const _ = Ioc.use('lodash')
@@ -130,9 +125,8 @@ describe('Ioc', function () {
   })
 
   it('should make a class with class defination and zero injections', function (done) {
-
     class User {
-      constructor(){
+      constructor () {
         this.name = 'foo'
       }
     }
@@ -148,13 +142,13 @@ describe('Ioc', function () {
 
   it('should make a class with class defination , which has dependencies on service providers', function (done) {
     class Redis {
-      constructor() {
+      constructor () {
         this.name = 'redis'
       }
     }
 
     class User {
-      constructor( App_Redis) {
+      constructor (App_Redis) {
         this.name = App_Redis.name
       }
     }
@@ -174,7 +168,7 @@ describe('Ioc', function () {
 
   it('should make a class with class defination , which has dependencies on deferred service providers', function (done) {
     class User {
-      constructor( App_Database) {
+      constructor (App_Database) {
         this.client = App_Database.client
       }
     }
@@ -193,7 +187,7 @@ describe('Ioc', function () {
     Ioc.later('Core/Cache', path.join(__dirname, './providers/circular/CacheProvider'))
 
     class User {
-      constructor( Core_Cache) {
+      constructor (Core_Cache) {
         this.client = Core_Cache.client
       }
     }
@@ -206,21 +200,21 @@ describe('Ioc', function () {
       }).catch(done)
   })
 
-  it('should throw an error when trying to make unregistered binding',function(done){
-    Ioc.make("Foo")
-    .catch(function(error){
-      expect(error).to.be.an.instanceof(Error)
-      done()
-    })
-  });
+  it('should throw an error when trying to make unregistered binding', function (done) {
+    Ioc.make('Foo')
+      .catch(function (error) {
+        expect(error).to.be.an.instanceof(Error)
+        done()
+      })
+  })
 
-  it('should throw an error when trying to make a variable which is not a valid class',function(done){
+  it('should throw an error when trying to make a variable which is not a valid class', function (done) {
     var Foo = {}
     Ioc.make(Foo)
-    .catch(function(error){
-      expect(error).to.be.an.instanceof(MakeException)
-      done()
-    })
+      .catch(function (error) {
+        expect(error).to.be.an.instanceof(MakeException)
+        done()
+      })
   })
 
   it('should make a class with class defination , which has dependency on another class , and another class has circular dependencies on deferred and resolved providers', function (done) {
@@ -236,78 +230,74 @@ describe('Ioc', function () {
       }).catch(done)
   })
 
-  it('should bind providers as singleton and return the same instance every time',function(done){
-
-    class Timer{
-      constructor(){
+  it('should bind providers as singleton and return the same instance every time', function (done) {
+    class Timer {
+      constructor () {
         this.currentTime = new Date()
       }
     }
 
-    Ioc.singleton('Timer',function(){
+    Ioc.singleton('Timer', function () {
       return new Timer()
     })
 
-    const timer1 = Ioc.use("Timer")
-    setTimeout(function(){
-      const timer2 = Ioc.use("Timer")
+    const timer1 = Ioc.use('Timer')
+    setTimeout(function () {
+      const timer2 = Ioc.use('Timer')
       expect(timer2.currentTime).to.equal(timer1.currentTime)
       done()
-    },1000);
+    }, 1000)
 
-  });
+  })
 
-  it('should make use of static injections over provider callback typehiniting',function(done){
-
-    class Foo{
-      constructor(bar){
+  it('should make use of static injections over provider callback typehiniting', function (done) {
+    class Foo {
+      constructor (bar) {
         this.greet = bar.greet
       }
     }
 
-    class Bar{
-      constructor(){
+    class Bar {
+      constructor () {
         this.greet = 'hello'
       }
     }
 
-    Ioc.bind('App/Bar',function(){
-      return new Bar();
+    Ioc.bind('App/Bar', function () {
+      return new Bar()
     })
 
-    class FooProvider{
+    class FooProvider {
 
-      static get inject(){
-        return ["App/Bar"]
+      static get inject () {
+        return ['App/Bar']
       }
 
-      *register(){
-        Ioc.bind('App/Foo', function (bar){
+      * register () {
+        Ioc.bind('App/Foo', function (bar) {
           return new Foo(bar)
         })
       }
     }
 
-
     IocHelpers
-    .register_provider(FooProvider)
-    .then(function(){
-      const FooInstance = Ioc.use("App/Foo")
-      expect(FooInstance.greet).to.equal('hello')
-      done()
-    }).catch(done)
-
+      .register_provider(FooProvider)
+      .then(function () {
+        const FooInstance = Ioc.use('App/Foo')
+        expect(FooInstance.greet).to.equal('hello')
+        done()
+      }).catch(done)
 
   })
 
-  describe("Ioc Helpers",function(){
-    it('should register a provider with class defination even if there is no register method',function(done){
+  describe('Ioc Helpers', function () {
+    it('should register a provider with class defination even if there is no register method', function (done) {
       class FooProvider {
       }
       IocHelpers
-      .register_provider(FooProvider)
-      .then(done).catch(done)
-    });
+        .register_provider(FooProvider)
+        .then(done).catch(done)
+    })
   })
 
 })
