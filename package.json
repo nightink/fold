@@ -1,5 +1,5 @@
 {
-  "name": "fold",
+  "name": "adonis-fold",
   "version": "1.0.0",
   "description": "Fold is an IOC container with solid DI layer for node js applications",
   "main": "index.js",
