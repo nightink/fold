@@ -1,7 +1,7 @@
 'use strict'
 
-const argumentsRegExp = /(constructor|^function)\w*\s*\(([\s\S]*?)\)/;
-const replaceRegExp = /[ ,\n\r\t]+/;
+const argumentsRegExp = /(constructor|^function)\w*\s*\(([\s\S]*?)\)/
+const replaceRegExp = /[ ,\n\r\t]+/
 
 /**
  * @module Introspect
@@ -17,12 +17,12 @@ let Introspect = exports = module.exports = {}
  * @param  {Function} fn
  * @return {Array}
  */
-Introspect.inspect = function(fn){
+Introspect.inspect = function (fn) {
   var fnArguments = argumentsRegExp.exec(fn)
-  if(!fnArguments || !fnArguments[2]){
+  if (!fnArguments || !fnArguments[2]) {
     return []
   }
-  fnArguments = fnArguments[2].trim();
-  if (0 === fnArguments.length) return [];
-  return fnArguments.split(replaceRegExp);
+  fnArguments = fnArguments[2].trim()
+  if (fnArguments.length === 0) return []
+  return fnArguments.split(replaceRegExp)
 }
