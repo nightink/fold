@@ -4,8 +4,8 @@ const exec = require('child_process').exec
 exec(`${path.normalize('./node_modules/istanbul/lib/cli.js cover ./node_modules/.bin/_mocha test/*.js --colors')} test`,function(error, stdout, stderr){
   if(error){
     console.log(error.stack)
-    process.exit(1)
+  }else{
+    console.log(stdout)
+    process.exit(0)
   }
-  console.log(stdout)
-  process.exit(0)
 })
