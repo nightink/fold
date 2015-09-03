@@ -1,14 +1,14 @@
 {
   "name": "fold",
   "version": "1.0.0",
-  "description": "",
+  "description": "Fold is an IOC container with solid DI layer for node js applications",
   "main": "index.js",
   "scripts": {
     "test": "node maketest",
     "postinstall": "node postinstall",
     "coverage": "node makecoverage"
   },
-  "author": "",
+  "author": "adonisjs",
   "license": "ISC",
   "dependencies": {
     "co": "^4.6.0",
