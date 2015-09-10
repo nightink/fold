@@ -1,9 +1,11 @@
 'use strict'
 
 /**
- * @module ImplementationException
- * @description makes a new implementation error
- */
+ * adonis-fold
+ * Copyright(c) - Harminder Virk
+ * MIT Licensed
+*/
+
 class ImplementationException extends Error {
   constructor (message) {
     super()

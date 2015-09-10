@@ -1,10 +1,11 @@
 'use strict'
 
 /**
- * @module MakeException
- * @description makes a new exception there is an error
- * while making classes.
- */
+ * adonis-fold
+ * Copyright(c) - Harminder Virk
+ * MIT Licensed
+*/
+
 class MakeException extends Error {
 
   constructor (message) {

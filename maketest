@@ -2,10 +2,5 @@ const path = require('path')
 const exec = require('child_process').exec
 
 exec(`${path.normalize('./node_modules/.bin/_mocha')} test --colors`,function(error, stdout, stderr){
-  if(error){
-    console.log(error.stack)
-  }else{
-    console.log(stdout)
-    process.exit(0)
-  }
+  console.log(stdout)
 })

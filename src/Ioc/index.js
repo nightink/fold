@@ -1,5 +1,11 @@
 'use strict'
 
+/**
+ * adonis-fold
+ * Copyright(c) - Harminder Virk
+ * MIT Licensed
+*/
+
 const Loader = require('../Loader/index')
 const introspect = require('../../utils/introspect')
 const MakeException = require('../Exception/make')
@@ -17,9 +23,9 @@ const Q = require('q')
 |   as different identities. Below stores maintain reference to
 |   each logical identity
 |
-|   1. resolved_providers - Providers which have been registered and
+|   1. resolveProviders - Providers which have been registered and
 |      resolved on boot cycle.
-|   2. unresolved_providers - Providers which are deferred and only
+|   2. unResolveProviders - Providers which are deferred and only
 |      registered on boot cycle and will be resolved on demand.
 |   3. dump - Dump is a map of autoload directory and will be
 |     returned as require(module)
@@ -27,9 +33,33 @@ const Q = require('q')
 |      namespaces.
 |
 */
-let resolved_providers = {}
-let unresolved_providers = {}
+
+/**
+ * reference to resolved providers
+ * @type {Object}
+ * @private
+ */
+let resolveProviders = {}
+
+/**
+ * reference to deferred providers
+ * @type {Object}
+ * @private
+ */
+let unResolveProviders = {}
+
+/**
+ * namespace aliases
+ * @type {Object}
+ * @private
+ */
 let aliases = {}
+
+/**
+ * reference to autoload dump
+ * @type {Object}
+ * @private
+ */
 let dump = {}
 
 try {
@@ -53,26 +83,37 @@ let Ioc = exports = module.exports = {}
  * @param  {Function} closure closure to be executed while resolving
  * provider
  * @return {void}
+ * @public
  */
 Ioc.bind = function (binding, closure) {
   const singleton = false
-  helpers.bind_provider(resolved_providers, unresolved_providers, binding, closure, singleton)
+  helpers.bindProvider(resolveProviders, unResolveProviders, binding, closure, singleton)
 }
 
+/**
+ * @function bind
+ * @description bind a provider to application as singleton
+ * @param  {String} binding binding namespace , have to be unique
+ * @param  {Function} closure closure to be executed while resolving
+ * provider
+ * @return {void}
+ * @public
+ */
 Ioc.singleton = function (binding, closure) {
   const singleton = true
-  helpers.bind_provider(resolved_providers, unresolved_providers, binding, closure, singleton)
+  helpers.bindProvider(resolveProviders, unResolveProviders, binding, closure, singleton)
 }
 
 /**
  * @function clear
  * @description Clearing all injections
  * @return {void}
+ * @public
  */
 Ioc.clear = function () {
-  resolved_providers = {}
+  resolveProviders = {}
   aliases = {}
-  unresolved_providers = {}
+  unResolveProviders = {}
   dump = {}
 }
 
@@ -80,18 +121,20 @@ Ioc.clear = function () {
  * @function getResolvedProviders
  * @description getting list of resolved providers
  * @return {Object}
+ * @public
  */
 Ioc.getResolvedProviders = function () {
-  return resolved_providers
+  return resolveProviders
 }
 
 /**
  * @function getUnResolvedProviders
  * @description getting list of un resolved providers
  * @return {Object}
+ * @public
  */
 Ioc.getUnResolvedProviders = function () {
-  return unresolved_providers
+  return unResolveProviders
 }
 
 /**
@@ -100,6 +143,7 @@ Ioc.getUnResolvedProviders = function () {
  * they are short names
  * @param  {Object} hash
  * @return {void}
+ * @public
  */
 Ioc.aliases = function (hash) {
   _.each(hash, function (value, key) {
@@ -113,6 +157,7 @@ Ioc.aliases = function (hash) {
  * @param  {String} key
  * @param  {String} namespace
  * @return {void}
+ * @public
  */
 Ioc.alias = function (key, namespace) {
   aliases[key] = namespace
@@ -124,9 +169,10 @@ Ioc.alias = function (key, namespace) {
  * @param  {String} provides Namespace for injection
  * @param  {String} klass    path to provider
  * @return {void}
+ * @public
  */
 Ioc.later = function (provides, klass) {
-  unresolved_providers[provides] = klass
+  unResolveProviders[provides] = klass
 }
 
 /**
@@ -136,6 +182,7 @@ Ioc.later = function (provides, klass) {
  * @param  {String} key
  * @param  {String} path
  * @return {void}
+ * @public
  */
 Ioc.dump = function (key, path) {
   dump[key] = path
@@ -147,11 +194,12 @@ Ioc.dump = function (key, path) {
  * more application specific logic.
  * @param  {String} binding
  * @return {*}
+ * @public
  */
 Ioc.use = function (binding) {
   // here we look for type of binding
   // it can be a PROVIDER, UNRESOLVED_PROVIDER, NPM_MODULE,LOCAL_MODULE
-  const type = Loader.return_injection_type(resolved_providers, unresolved_providers, aliases, dump, binding)
+  const type = Loader.returnInjectionType(resolveProviders, unResolveProviders, aliases, dump, binding)
 
   // if looking for unresolved provider , send them back with an error
   if (type === 'UNRESOLVED_PROVIDER') {
@@ -159,11 +207,11 @@ Ioc.use = function (binding) {
   }
 
   // here we grab that binding using it's type
-  const bindingModule = Loader.resolve_using_type(resolved_providers, unresolved_providers, aliases, dump, binding, type)
+  const bindingModule = Loader.resolveUsingType(resolveProviders, unResolveProviders, aliases, dump, binding, type)
 
   // if i am resolved provider than make me before returning
-  if (type === 'PROVIDER' && helpers.is_verified_as_binding(binding, bindingModule)) {
-    let injections = helpers.inject_type_hinted_injections(resolved_providers, bindingModule)
+  if (type === 'PROVIDER' && helpers.isVerifiedAsBinding(binding, bindingModule)) {
+    let injections = helpers.injectTypeHintedInjections(resolveProviders, bindingModule)
     injections = _.map(injections, function (injection, index) {
       return Ioc.use(index)
     })
@@ -204,6 +252,7 @@ Ioc.use = function (binding) {
  * instance with all resolved dependencies
  * @param  {*} binding
  * @return {*}
+ * @public
  */
 Ioc.make = function (binding) {
   return new Promise(function (resolve, reject) {
@@ -218,15 +267,15 @@ Ioc.make = function (binding) {
     /**
      * A dummy promise to be used when binding is not
      * a un resolved binding otherwise we replace it
-     * with register_provider method
+     * with registerProvider method
      */
     let registerPromise = new Promise(function (resolve) { resolve() })
 
     if (typeof (binding) === 'string') {
-      type = Loader.return_injection_type(resolved_providers, unresolved_providers, aliases, dump, binding)
+      type = Loader.returnInjectionType(resolveProviders, unResolveProviders, aliases, dump, binding)
       if (type === 'UNRESOLVED_PROVIDER') {
-        let provider = require(unresolved_providers[binding])
-        registerPromise = helpers.register_provider(provider)
+        let provider = require(unResolveProviders[binding])
+        registerPromise = helpers.registerProvider(provider)
       }
     }
 
@@ -234,9 +283,9 @@ Ioc.make = function (binding) {
       .then(function (resolvedClass) {
         switch (type) {
           case 'PROVIDER':
-            return Ioc._makeProvider(resolved_providers[binding])
+            return Ioc._makeProvider(resolveProviders[binding])
           case 'UNRESOLVED_PROVIDER':
-            return Ioc._makeProvider(resolved_providers[binding])
+            return Ioc._makeProvider(resolveProviders[binding])
           case 'NPM_MODULE':
             return new Promise(function (resolve) { resolve() })
           case 'LOCAL_MODULE':
@@ -260,6 +309,7 @@ Ioc.make = function (binding) {
  * until dependencies are stable
  * @param  {Object} provider
  * @return {Promise<pending>}
+ * @public
  */
 Ioc._makeProvider = function (provider) {
   let instances = Q()
@@ -277,6 +327,7 @@ Ioc._makeProvider = function (provider) {
  * inject getter.
  * @param  {Class} binding
  * @return {Promise<pending>}
+ * @public
  */
 Ioc._makeClass = function (Binding) {
   let _bind = Function.prototype.bind

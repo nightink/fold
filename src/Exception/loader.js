@@ -1,10 +1,11 @@
 'use strict'
 
 /**
- * @module LoaderException
- * @description makes a new exception if
- * dependency is missing.
- */
+ * adonis-fold
+ * Copyright(c) - Harminder Virk
+ * MIT Licensed
+*/
+
 class LoaderException extends Error {
 
   constructor (message) {

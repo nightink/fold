@@ -1,5 +1,11 @@
 'use strict'
 
+/**
+ * adonis-fold
+ * Copyright(c) - Harminder Virk
+ * MIT Licensed
+*/
+
 const LoaderException = require('../Exception/loader')
 const walk = require('walk')
 const fs = require('fs')
@@ -9,7 +15,6 @@ const path = require('path')
  * @module Loader
  * @description Loader module is responsible for determining binding type
  * and resolving module based upon type
- * @author Harminder Virk
  */
 let Loader = exports = module.exports = {}
 
@@ -19,6 +24,7 @@ let Loader = exports = module.exports = {}
  * and throws custom exception if unable to load one
  * @param  {String} module
  * @return {*}
+ * @public
  */
 Loader.require = function (module) {
   try {
@@ -35,6 +41,7 @@ Loader.require = function (module) {
  * @param  {Object} bindings
  * @param  {String} module
  * @return {*}
+ * @public
  */
 Loader.resolve = function (bindings, module) {
   if (!bindings[module]) {
@@ -44,7 +51,7 @@ Loader.resolve = function (bindings, module) {
 }
 
 /**
- * @function resolve_using_type
+ * @function resolveUsingType
  * @description tries to resolve injection using it's type
  * or throws a custom exception
  * @param  {Object} bindings
@@ -52,8 +59,9 @@ Loader.resolve = function (bindings, module) {
  * @param  {String} injection
  * @param  {String} type
  * @return {*}
+ * @public
  */
-Loader.resolve_using_type = function (bindings, unresolvedBindings, aliases, dump, injection, type) {
+Loader.resolveUsingType = function (bindings, unresolvedBindings, aliases, dump, injection, type) {
   let instance = null
   injection = aliases[injection] || injection
 
@@ -78,14 +86,15 @@ Loader.resolve_using_type = function (bindings, unresolvedBindings, aliases, dum
 }
 
 /**
- * @function return_injection_type
+ * @function returnInjectionType
  * @description Determines type of injection
  * @param  {Object} bindings
  * @param  {Object} dump
  * @param  {String} injection
  * @return {String}
+ * @public
  */
-Loader.return_injection_type = function (bindings, unresolvedBindings, aliases, dump, injection) {
+Loader.returnInjectionType = function (bindings, unresolvedBindings, aliases, dump, injection) {
   injection = aliases[injection] || injection
   if (bindings[injection]) {
     return 'PROVIDER'
@@ -99,7 +108,7 @@ Loader.return_injection_type = function (bindings, unresolvedBindings, aliases, 
 }
 
 /**
- * @function generate_directory_hash
+ * @function generateDirectoryHash
  * @description Generates directory hash with key/value pairs
  * where key is the name of the class and value is path to
  * directory. It only registers es6 classes and functions
@@ -108,8 +117,9 @@ Loader.return_injection_type = function (bindings, unresolvedBindings, aliases, 
  * @param {String} basePath
  * @param {String} rootNamespace
  * @return {Object}
+ * @public
  */
-Loader.generate_directory_hash = function (directory, basePath, rootNamespace) {
+Loader.generateDirectoryHash = function (directory, basePath, rootNamespace) {
   const walker = walk.walk(directory)
   let hash = {}
 
@@ -164,13 +174,14 @@ Loader.generate_directory_hash = function (directory, basePath, rootNamespace) {
 }
 
 /**
- * @function save_directory_dump
+ * @function saveDirectoryDump
  * @description here we simply convert directory map into a string
  * using JSON.stringify and save it as node module.
  * @param  {Object} hash
  * @return {Promise<fulfilled>}
+ * @public
  */
-Loader.save_directory_dump = function (hash) {
+Loader.saveDirectoryDump = function (hash) {
   hash = JSON.stringify(hash, null, 2)
   hash = `module.exports = ${hash}`
 

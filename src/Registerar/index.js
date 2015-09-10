@@ -1,5 +1,11 @@
 'use strict'
 
+/**
+ * adonis-fold
+ * Copyright(c) - Harminder Virk
+ * MIT Licensed
+*/
+
 const _ = require('lodash')
 const helpers = require('./helpers')
 const Loader = require('../Loader')
@@ -15,14 +21,15 @@ let Registerar = exports = module.exports = {}
  * providers and resolve them until DI cycle
  * is stable.
  * @param  {Array} hash  Array of providers
+ * @public
  */
 Registerar.register = function (hash, deferredHash) {
   return new Promise(function (resolve, reject) {
-    helpers.register_deferred(deferredHash)
-    let loadedProviders = helpers.require_hash(hash)
+    helpers.registerDeferred(deferredHash)
+    let loadedProviders = helpers.requireHash(hash)
     let instances = Q()
     loadedProviders.forEach(function (provider) {
-      instances = instances.then(iocHelpers.register_provider.bind(null, provider))
+      instances = instances.then(iocHelpers.registerProvider.bind(null, provider))
     })
     instances.then(function () {
       return Registerar.stableizeCycle()
@@ -30,17 +37,24 @@ Registerar.register = function (hash, deferredHash) {
   })
 }
 
+/**
+ * @function stableizeCycle
+ * @description here to make sure all required injections are stable
+ * before we return final fulfilled promise
+ * @return {Promise}
+ * @public
+ */
 Registerar.stableizeCycle = function () {
-  let resolvedProvidersInjections = helpers.get_injections_for_resolved_providers()
-  let resolvedInjections = helpers.get_all_resolved_providers()
-  let unResolvedInjections = helpers.get_all_unresolved_providers()
+  let resolvedProvidersInjections = helpers.getInjectionsForResolvedProviders()
+  let resolvedInjections = helpers.getAllResolvedProviders()
+  let unResolvedInjections = helpers.getAllUnresolvedProviders()
   let yetToBeResolved = _.difference(resolvedProvidersInjections, resolvedInjections)
   let toBeResolvedFromDeferred = _.intersection(unResolvedInjections, yetToBeResolved)
 
   let instances = Q()
   toBeResolvedFromDeferred.forEach(function (injection) {
-    let provider = helpers.require_injection(injection)
-    instances = instances.then(iocHelpers.register_provider.bind(null, provider))
+    let provider = helpers.requireInjection(injection)
+    instances = instances.then(iocHelpers.registerProvider.bind(null, provider))
   })
   return instances
 }
@@ -55,11 +69,12 @@ Registerar.stableizeCycle = function () {
  * @param {String} basePath
  * @param {String} rootNamespace
  * @return {Promise<fulfilled>}
+ * @public
  */
 Registerar.autoload = function (directory, basePath, rootNamespace) {
   return new Promise(function (resolve, reject) {
     Loader
-      .generate_directory_hash(directory, basePath, rootNamespace)
+      .generateDirectoryHash(directory, basePath, rootNamespace)
       .then(function (hash) {
         _.each(hash, function (item, index) {
           Ioc.dump(index, item)
@@ -80,12 +95,13 @@ Registerar.autoload = function (directory, basePath, rootNamespace) {
  * @param {String} basePath
  * @param {String} rootNamespace
  * @return {Promise<fulfilled>}
+ * @public
  */
 Registerar.dump = function (directory, basePath, rootNamespace) {
   return new Promise(function (resolve, reject) {
     Loader
-      .generate_directory_hash(directory, basePath, rootNamespace)
-      .then(Loader.save_directory_dump)
+      .generateDirectoryHash(directory, basePath, rootNamespace)
+      .then(Loader.saveDirectoryDump)
       .then(resolve)
       .then(reject)
   })

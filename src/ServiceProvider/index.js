@@ -1,5 +1,11 @@
 'use strict'
 
+/**
+ * adonis-fold
+ * Copyright(c) - Harminder Virk
+ * MIT Licensed
+*/
+
 const Ioc = require('../Ioc')
 function ServiceProvider () {
   this.app = Ioc

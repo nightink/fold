@@ -54,18 +54,18 @@ describe('Module Loader', function () {
     })
 
     it('should determine type of injection to be fulfilled and fallback to npm module when not find inside container', function () {
-      const module = Loader.return_injection_type({}, {}, {}, {}, 'lodash')
+      const module = Loader.returnInjectionType({}, {}, {}, {}, 'lodash')
       expect(module).to.equal('NPM_MODULE')
     })
 
     it('should determine type of injection and get internal mapping if exists inside dump', function () {
-      const module = Loader.return_injection_type({}, {}, {}, {'App/Users': '../../user'}, 'App/Users')
+      const module = Loader.returnInjectionType({}, {}, {}, {'App/Users': '../../user'}, 'App/Users')
       expect(module).to.equal('LOCAL_MODULE')
     })
 
     it("should determine ioc bindings for a service provider if injection is available inside container's bindings", function () {
       const binding = function () { return 'foo' }
-      const module = Loader.return_injection_type({'App/Users': binding}, {}, {}, {}, 'App/Users')
+      const module = Loader.returnInjectionType({'App/Users': binding}, {}, {}, {}, 'App/Users')
       expect(module).to.equal('PROVIDER')
     })
 
@@ -73,8 +73,8 @@ describe('Module Loader', function () {
       const binding = function () { return 'foo' }
       const bindings = {'App/Foo': binding}
 
-      const type = Loader.return_injection_type(bindings, {}, {}, {}, 'App/Foo')
-      const instance = Loader.resolve_using_type(bindings, {}, {}, {}, 'App/Foo', type)
+      const type = Loader.returnInjectionType(bindings, {}, {}, {}, 'App/Foo')
+      const instance = Loader.resolveUsingType(bindings, {}, {}, {}, 'App/Foo', type)
 
       expect(type).to.equal('PROVIDER')
       expect(instance()).to.equal('foo')
@@ -84,8 +84,8 @@ describe('Module Loader', function () {
       const binding = function () { return 'foo' }
       const bindings = {'App/Foo': binding}
 
-      const type = Loader.return_injection_type({}, bindings, {}, {}, 'App/Foo')
-      const instance = Loader.resolve_using_type({}, bindings, {}, {}, 'App/Foo', type)
+      const type = Loader.returnInjectionType({}, bindings, {}, {}, 'App/Foo')
+      const instance = Loader.resolveUsingType({}, bindings, {}, {}, 'App/Foo', type)
 
       expect(type).to.equal('UNRESOLVED_PROVIDER')
       expect(instance()).to.equal('foo')
@@ -93,7 +93,7 @@ describe('Module Loader', function () {
 
     it('should throw an error when resolving module does not fall into any category', function () {
       const fn = function () {
-        return Loader.resolve_using_type({}, {}, {}, 'App/Foo', null)
+        return Loader.resolveUsingType({}, {}, {}, 'App/Foo', null)
       }
 
       expect(fn).to.throw(LoaderException)
@@ -107,7 +107,7 @@ describe('Module Loader', function () {
       const basePath = path.join(__dirname, '/app')
       const baseNameSpace = 'App'
 
-      Loader.generate_directory_hash(basePath, basePath, baseNameSpace)
+      Loader.generateDirectoryHash(basePath, basePath, baseNameSpace)
         .then(function (hash) {
           expect(hash).to.be.an('object')
           expect(hash['App/Services/UserService']).to.equal(path.join(__dirname + '/app/Services/UserService.js'))
@@ -119,11 +119,11 @@ describe('Module Loader', function () {
       const basePath = path.join(__dirname, '/app')
       const baseNameSpace = 'App'
 
-      Loader.generate_directory_hash(basePath, basePath, baseNameSpace)
+      Loader.generateDirectoryHash(basePath, basePath, baseNameSpace)
         .then(function (hash) {
           expect(hash).to.be.an('object')
           expect(hash['App/Services/UserService']).to.equal(path.join(__dirname + '/app/Services/UserService.js'))
-          return Loader.save_directory_dump(hash)
+          return Loader.saveDirectoryDump(hash)
         })
         .then(function () {
           let hash = require('../dump/hash.js')

@@ -281,7 +281,7 @@ describe('Ioc', function () {
     }
 
     IocHelpers
-      .register_provider(FooProvider)
+      .registerProvider(FooProvider)
       .then(function () {
         const FooInstance = Ioc.use('App/Foo')
         expect(FooInstance.greet).to.equal('hello')
@@ -295,7 +295,7 @@ describe('Ioc', function () {
       class FooProvider {
       }
       IocHelpers
-        .register_provider(FooProvider)
+        .registerProvider(FooProvider)
         .then(done).catch(done)
     })
   })
