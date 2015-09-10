@@ -221,7 +221,17 @@ Ioc.use = function (binding) {
       }
       return bindingModule.instance
     }
-    return bindingModule.closure.apply(null, injections)
+    let resolvedModule = bindingModule.closure.apply(null, injections)
+
+    // hooks helps in transforming the return result
+    // and return something else.
+    // @use case - Lucid class for models
+    if(resolvedModule.hooks){
+      _.each(resolvedModule.hooks, function (hook){
+        resolvedModule = resolvedModule[hook]()
+      })
+    }
+    return resolvedModule
   }
 
   // return if i am not resolved provider

@@ -250,6 +250,25 @@ describe('Ioc', function () {
 
   })
 
+  it('should return trasnformed object when hooks are defined' , function () {
+
+    class Transformed {
+      static get hooks(){
+        return ['extend']
+      }
+      static extend(){
+        return 'foo'
+      }
+    }
+
+    Ioc.bind('App/Transformed', function () {
+      return Transformed
+    })
+
+    expect(Ioc.use('App/Transformed')).to.equal('foo')
+
+  })
+
   it('should make use of static injections over provider callback typehiniting', function (done) {
     class Foo {
       constructor (bar) {
