@@ -323,6 +323,25 @@ describe('Ioc', function () {
 
   })
 
+  it('should throw an error when raw class make has unmet dependencies', function (done) {
+
+    class User{
+
+      static get inject(){
+        return ["App/All"]
+      }
+
+    }
+
+    Ioc
+    .make(User)
+    .then (function () {
+    }).catch(function (err) {
+      done()
+    })
+
+  })
+
   describe('Ioc Helpers', function () {
     it('should register a provider with class defination even if there is no register method', function (done) {
       class FooProvider {
