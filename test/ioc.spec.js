@@ -309,6 +309,20 @@ describe('Ioc', function () {
 
   })
 
+  it('should throw an error when binding has unmet dependencies', function () {
+
+    Ioc.bind('App/Bar', function (App_All) {
+      return 'foo'
+    })
+
+    const fn = function(){
+      return Ioc.use("App/Bar")
+    }
+
+    expect(fn).to.throw(/Unable to inject/)
+
+  })
+
   describe('Ioc Helpers', function () {
     it('should register a provider with class defination even if there is no register method', function (done) {
       class FooProvider {
