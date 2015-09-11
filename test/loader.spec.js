@@ -115,24 +115,5 @@ describe('Module Loader', function () {
         }).catch(done)
     })
 
-    it('should save generated hash inside a file as a node module', function (done) {
-      const basePath = path.join(__dirname, '/app')
-      const baseNameSpace = 'App'
-
-      Loader.generateDirectoryHash(basePath, basePath, baseNameSpace)
-        .then(function (hash) {
-          expect(hash).to.be.an('object')
-          expect(hash['App/Services/UserService']).to.equal(path.join(__dirname + '/app/Services/UserService.js'))
-          return Loader.saveDirectoryDump(hash)
-        })
-        .then(function () {
-          let hash = require('../dump/hash.js')
-          expect(hash).to.be.an('object')
-          expect(hash['App/Services/UserService']).to.equal(path.join(__dirname + '/app/Services/UserService.js'))
-          done()
-        })
-        .catch(done)
-    })
-
   })
 })

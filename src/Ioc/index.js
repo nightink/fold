@@ -207,7 +207,7 @@ Ioc.use = function (binding) {
   }
 
   // here we grab that binding using it's type
-  const bindingModule = Loader.resolveUsingType(resolveProviders, unResolveProviders, aliases, dump, binding, type)
+  let bindingModule = Loader.resolveUsingType(resolveProviders, unResolveProviders, aliases, dump, binding, type)
 
   // if i am resolved provider than make me before returning
   if (type === 'PROVIDER' && helpers.isVerifiedAsBinding(binding, bindingModule)) {
@@ -221,20 +221,17 @@ Ioc.use = function (binding) {
       }
       return bindingModule.instance
     }
-    let resolvedModule = bindingModule.closure.apply(null, injections)
-
-    // hooks helps in transforming the return result
-    // and return something else.
-    // @use case - Lucid class for models
-    if(resolvedModule.hooks){
-      _.each(resolvedModule.hooks, function (hook){
-        resolvedModule = resolvedModule[hook]()
-      })
-    }
-    return resolvedModule
+    return bindingModule.closure.apply(null, injections)
   }
 
-  // return if i am not resolved provider
+  // hooks helps in transforming the return result
+  // and return something else.
+  // @use case - Lucid class for models
+  if(bindingModule.hooks){
+    _.each(bindingModule.hooks, function (hook){
+      bindingModule = bindingModule[hook]()
+    })
+  }
   return bindingModule
 }
 
