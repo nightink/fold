@@ -2,7 +2,7 @@
 
 /**
  * adonis-fold
- * Copyright(c) - Harminder Virk
+ * Copyright(c) 2015-2015 Harminder Virk
  * MIT Licensed
 */
 
@@ -51,7 +51,20 @@ IocHelpers.isVerifiedAsBinding = function (binding, bindingModule) {
  * @public
  */
 IocHelpers.injectTypeHintedInjections = function (bindings, bindingModule) {
-  return _.pick(bindings, bindingModule.injections)
+
+  const picked = _.pick(bindings, bindingModule.injections)
+
+  const unableToPick = _.difference(bindingModule.injections,_.keys(picked))
+
+  /**
+   * returning error when required dependencies are not met
+   * by resolved dependencies
+   */
+  if(_.size(unableToPick) > 0){
+    throw new Error(`Unable to inject ${unableToPick.join(' and ')}`)
+  }
+
+  return picked
 }
 
 /**
