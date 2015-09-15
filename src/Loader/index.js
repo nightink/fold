@@ -61,7 +61,7 @@ Loader.resolve = function (bindings, module) {
  * @return {*}
  * @public
  */
-Loader.resolveUsingType = function (bindings, unresolvedBindings, aliases, dump, injection, type) {
+Loader.resolveUsingType = function (bindings, unresolvedBindings, aliases, dump, dumpBasePath, dumpNamespace, injection, type) {
   let instance = null
   injection = aliases[injection] || injection
 
@@ -73,7 +73,11 @@ Loader.resolveUsingType = function (bindings, unresolvedBindings, aliases, dump,
       instance = unresolvedBindings[injection]
       break
     case 'LOCAL_MODULE':
-      instance = Loader.require(dump[injection])
+      if(dump[injection]){
+        instance = Loader.require(dump[injection])
+      }else{
+        instance = Loader._makeDump(injection,dumpBasePath,dumpNamespace)
+      }
       break
     case 'NPM_MODULE':
       instance = Loader.require(injection)
@@ -94,17 +98,46 @@ Loader.resolveUsingType = function (bindings, unresolvedBindings, aliases, dump,
  * @return {String}
  * @public
  */
-Loader.returnInjectionType = function (bindings, unresolvedBindings, aliases, dump, injection) {
+Loader.returnInjectionType = function (bindings, unresolvedBindings, aliases, dump, dumpBasePath, dumpNamespace, injection) {
   injection = aliases[injection] || injection
   if (bindings[injection]) {
     return 'PROVIDER'
+  }else if (unresolvedBindings[injection]) {
+    return 'UNRESOLVED_PROVIDER'
   }else if (dump[injection]) {
     return 'LOCAL_MODULE'
-  } else if (unresolvedBindings[injection]) {
-    return 'UNRESOLVED_PROVIDER'
-  } else {
+  }else if(Loader._isDump(dumpNamespace,injection)) {
+    return 'LOCAL_MODULE'
+  }else {
     return 'NPM_MODULE'
   }
+}
+
+/**
+ * @function isDump
+ * @description Try to figure out whether is it a
+ * dump path or not.
+ * @param  {String}  namespace
+ * @param  {String}  injection
+ * @return {Boolean}
+ */
+Loader._isDump = function(namespace,injection){
+  return injection.startsWith(namespace)
+}
+
+/**
+ * @function _makeDump
+ * @description it makes path to local module using namespace and
+ * require it
+ * @param  {String} injection
+ * @param  {String} basePath
+ * @param  {String} namespace
+ * @return {*}
+ */
+Loader._makeDump = function (injection,basePath,namespace) {
+  const incrmentalPath = injection.replace(namespace,'')
+  const modulePath = path.join(basePath,incrmentalPath)
+  return Loader.require(modulePath)
 }
 
 /**

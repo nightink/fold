@@ -62,6 +62,9 @@ let aliases = {}
  */
 let dump = {}
 
+let dumpBasePath = null
+let dumpNamespace = null
+
 try {
   dump = require('../../dump/hash')
 } catch(e) {
@@ -189,6 +192,18 @@ Ioc.dump = function (key, path) {
 }
 
 /**
+ * @function dumpSettings
+ * @description Set autoload dump settings to make resolves easy
+ * @param  {String} basePath
+ * @param  {String} NameSpace
+ * @return {void}
+ */
+Ioc.dumpSettings = function (basePath,NameSpace){
+  dumpBasePath = basePath,
+  dumpNamespace = NameSpace
+}
+
+/**
  * @function use
  * @description Equalent to node's require , with
  * more application specific logic.
@@ -199,7 +214,7 @@ Ioc.dump = function (key, path) {
 Ioc.use = function (binding) {
   // here we look for type of binding
   // it can be a PROVIDER, UNRESOLVED_PROVIDER, NPM_MODULE,LOCAL_MODULE
-  const type = Loader.returnInjectionType(resolveProviders, unResolveProviders, aliases, dump, binding)
+  const type = Loader.returnInjectionType(resolveProviders, unResolveProviders, aliases, dump, dumpBasePath, dumpNamespace, binding)
 
   // if looking for unresolved provider , send them back with an error
   if (type === 'UNRESOLVED_PROVIDER') {
@@ -207,7 +222,7 @@ Ioc.use = function (binding) {
   }
 
   // here we grab that binding using it's type
-  let bindingModule = Loader.resolveUsingType(resolveProviders, unResolveProviders, aliases, dump, binding, type)
+  let bindingModule = Loader.resolveUsingType(resolveProviders, unResolveProviders, aliases, dump, dumpBasePath, dumpNamespace, binding, type)
 
   // if i am resolved provider than make me before returning
   if (type === 'PROVIDER' && helpers.isVerifiedAsBinding(binding, bindingModule)) {
@@ -280,7 +295,7 @@ Ioc.make = function (binding) {
     let registerPromise = new Promise(function (resolve) { resolve() })
 
     if (typeof (binding) === 'string') {
-      type = Loader.returnInjectionType(resolveProviders, unResolveProviders, aliases, dump, binding)
+      type = Loader.returnInjectionType(resolveProviders, unResolveProviders, aliases, dump, dumpBasePath, dumpNamespace, binding)
       if (type === 'UNRESOLVED_PROVIDER') {
         let provider = require(unResolveProviders[binding])
         registerPromise = helpers.registerProvider(provider)

@@ -54,18 +54,18 @@ describe('Module Loader', function () {
     })
 
     it('should determine type of injection to be fulfilled and fallback to npm module when not find inside container', function () {
-      const module = Loader.returnInjectionType({}, {}, {}, {}, 'lodash')
+      const module = Loader.returnInjectionType({}, {}, {}, {}, null, null, 'lodash')
       expect(module).to.equal('NPM_MODULE')
     })
 
     it('should determine type of injection and get internal mapping if exists inside dump', function () {
-      const module = Loader.returnInjectionType({}, {}, {}, {'App/Users': '../../user'}, 'App/Users')
+      const module = Loader.returnInjectionType({}, {}, {}, {'App/Users': '../../user'}, null, null, 'App/Users')
       expect(module).to.equal('LOCAL_MODULE')
     })
 
     it("should determine ioc bindings for a service provider if injection is available inside container's bindings", function () {
       const binding = function () { return 'foo' }
-      const module = Loader.returnInjectionType({'App/Users': binding}, {}, {}, {}, 'App/Users')
+      const module = Loader.returnInjectionType({'App/Users': binding}, {}, {}, {}, null, null, 'App/Users')
       expect(module).to.equal('PROVIDER')
     })
 
@@ -73,19 +73,36 @@ describe('Module Loader', function () {
       const binding = function () { return 'foo' }
       const bindings = {'App/Foo': binding}
 
-      const type = Loader.returnInjectionType(bindings, {}, {}, {}, 'App/Foo')
-      const instance = Loader.resolveUsingType(bindings, {}, {}, {}, 'App/Foo', type)
+      const type = Loader.returnInjectionType(bindings, {}, {}, {}, null, null, 'App/Foo')
+      const instance = Loader.resolveUsingType(bindings, {}, {}, {}, null, null, 'App/Foo', type)
 
       expect(type).to.equal('PROVIDER')
       expect(instance()).to.equal('foo')
     })
 
+    it('should return local module as type for bindings starting with namespace', function (){
+
+      const type = Loader.returnInjectionType({}, {}, {}, {}, './app', 'App', 'App/Foo')
+      expect(type).to.equal('LOCAL_MODULE')
+
+    })
+
+    it('should require local module when passed namespace', function (){
+
+      const type = Loader.returnInjectionType({}, {}, {}, {}, './app', 'App', 'App/Foo')
+      const instance = Loader.resolveUsingType({}, {}, {}, {}, path.join(__dirname,'./app'), 'App', 'App/Http/Users',type)
+      expect(type).to.equal('LOCAL_MODULE')
+      expect(instance.name).to.equal('Users')
+
+    })
+
+
     it('should detect unresolved bindings', function () {
       const binding = function () { return 'foo' }
       const bindings = {'App/Foo': binding}
 
-      const type = Loader.returnInjectionType({}, bindings, {}, {}, 'App/Foo')
-      const instance = Loader.resolveUsingType({}, bindings, {}, {}, 'App/Foo', type)
+      const type = Loader.returnInjectionType({}, bindings, {}, {}, null, null, 'App/Foo')
+      const instance = Loader.resolveUsingType({}, bindings, {}, {}, null, null, 'App/Foo', type)
 
       expect(type).to.equal('UNRESOLVED_PROVIDER')
       expect(instance()).to.equal('foo')
@@ -93,7 +110,7 @@ describe('Module Loader', function () {
 
     it('should throw an error when resolving module does not fall into any category', function () {
       const fn = function () {
-        return Loader.resolveUsingType({}, {}, {}, 'App/Foo', null)
+        return Loader.resolveUsingType({}, {}, {}, null, null, 'App/Foo', null)
       }
 
       expect(fn).to.throw(LoaderException)

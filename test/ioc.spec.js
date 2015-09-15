@@ -73,6 +73,7 @@ describe('Ioc', function () {
   })
 
   it('should make use of static inject property over class constructor while making classes', function (done) {
+
     class Foo {
       constructor () {
         this.foo = 'boom'
