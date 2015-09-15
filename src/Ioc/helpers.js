@@ -81,6 +81,8 @@ IocHelpers.registerProvider = function (Provider) {
   return new Promise(function (resolve, reject) {
     if (Provider.inject) {
       staticInjections = Provider.inject
+    }else{
+      staticInjections = []
     }
 
     let instance = new Provider()
