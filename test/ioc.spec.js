@@ -329,6 +329,40 @@ describe('Ioc', function () {
 
   })
 
+  it('should make a provider which is dependent upon other providers which has no dependencies', function (done) {
+
+    Ioc.bind('Foo/Bar', function () {
+      return 'bar'
+    })
+
+    Ioc.bind('Foo/Baz', function () {
+      return 'baz'
+    })
+
+    class Birds{
+
+      static get inject(){
+        return ['Foo/Bar','Foo/Baz']
+      }
+
+      constructor(Bar,Baz) {
+        this.bar = Bar
+        this.baz = Baz
+      }
+
+    }
+
+    Ioc
+    .make(Birds)
+    .then (function (user) {
+      expect(user.bar).to.equal('bar')
+      expect(user.baz).to.equal('baz')
+      done()
+    }).catch(done)
+
+
+  })
+
   describe('Ioc Helpers', function () {
     it('should register a provider with class defination even if there is no register method', function (done) {
       class FooProvider {

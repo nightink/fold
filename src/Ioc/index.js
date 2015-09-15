@@ -319,11 +319,11 @@ Ioc.make = function (binding) {
  * @public
  */
 Ioc._makeProvider = function (provider) {
-  let instances = Q()
+  let instances = []
   provider.injections.forEach(function (injection) {
-    instances = instances.then(Ioc.make.bind(null, injection))
+    instances.push(Ioc.make(injection))
   })
-  return instances
+  return Q.all(instances)
 }
 
 /**
@@ -340,7 +340,7 @@ Ioc._makeClass = function (Binding) {
   let _bind = Function.prototype.bind
   return new Promise(function (resolve, reject) {
     let injections = []
-    let instances = Q()
+    let instances = []
 
     /**
      * if class has a inject method use it , otherwise
@@ -355,10 +355,12 @@ Ioc._makeClass = function (Binding) {
     if (injections && _.size(injections) > 0) {
       injections.forEach(function (injection) {
         injection = injection.replace(/_/g, '/')
-        instances = instances.then(Ioc.make.bind(null, injection))
+        instances.push(Ioc.make(injection))
       })
 
-      instances.then(function (values) {
+      Q
+      .all(instances)
+      .then(function (values) {
         resolve(new (_bind.apply(Binding, [null].concat(values)))())
       }).catch(reject)
 

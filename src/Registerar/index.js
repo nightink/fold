@@ -27,13 +27,17 @@ Registerar.register = function (hash, deferredHash) {
   return new Promise(function (resolve, reject) {
     helpers.registerDeferred(deferredHash)
     let loadedProviders = helpers.requireHash(hash)
-    let instances = Q()
+    let instances = []
     loadedProviders.forEach(function (provider) {
-      instances = instances.then(iocHelpers.registerProvider.bind(null, provider))
+      instances.push(iocHelpers.registerProvider(provider))
     })
-    instances.then(function () {
+
+    Q
+    .all(instances)
+    .then(function () {
       return Registerar.stableizeCycle()
     }).then(resolve).catch(reject)
+
   })
 }
 
@@ -51,12 +55,12 @@ Registerar.stableizeCycle = function () {
   let yetToBeResolved = _.difference(resolvedProvidersInjections, resolvedInjections)
   let toBeResolvedFromDeferred = _.intersection(unResolvedInjections, yetToBeResolved)
 
-  let instances = Q()
+  let instances = []
   toBeResolvedFromDeferred.forEach(function (injection) {
     let provider = helpers.requireInjection(injection)
-    instances = instances.then(iocHelpers.registerProvider.bind(null, provider))
+    instances.push(iocHelpers.registerProvider(provider))
   })
-  return instances
+  return Q.all(instances)
 }
 
 /**
