@@ -18,6 +18,7 @@ const introspect = require('../../utils/introspect')
  * @private
  */
 let staticInjections = []
+let useStatic = false
 
 /**
  * @module IocHelpers
@@ -76,6 +77,7 @@ IocHelpers.injectTypeHintedInjections = function (bindings, bindingModule) {
  * @public
  */
 IocHelpers.registerProvider = function (Provider) {
+
   return new Promise(function (resolve, reject) {
     if (Provider.inject) {
       staticInjections = Provider.inject
@@ -86,9 +88,28 @@ IocHelpers.registerProvider = function (Provider) {
       return resolve()
     }
     co(function *() {
-      yield instance.register()
-    }).then(resolve).catch(reject)
+      return yield instance.register()
+    }).then(function (response) {
+
+      /**
+       * make sure to clear static method injections after register
+       * is called
+       */
+      staticInjections = []
+      resolve(response)
+
+    }).catch(function (error){
+
+      /**
+       * make sure to clear static method injections after register
+       * is called
+       */
+      staticInjections = []
+      reject(error)
+
+    })
   })
+
 }
 
 /**
@@ -103,6 +124,7 @@ IocHelpers.registerProvider = function (Provider) {
  * @public
  */
 IocHelpers.bindProvider = function (resolvedProviders, unResolvedProviders, binding, closure, singleton) {
+
   // removing from unresolved if it was
   // deferred.
   if (unResolvedProviders[binding]) {
@@ -121,9 +143,6 @@ IocHelpers.bindProvider = function (resolvedProviders, unResolvedProviders, bind
   injections = _.map(injections, function (injection) {
     return injection.replace(/_/g, '/')
   })
-
-  // clear staticInjections once have injections in place
-  staticInjections = []
 
   // adding to resolved providers
   resolvedProviders[binding] = {closure, injections, singleton}

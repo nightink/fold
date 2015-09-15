@@ -215,6 +215,7 @@ Ioc.use = function (binding) {
     injections = _.map(injections, function (injection, index) {
       return Ioc.use(index)
     })
+
     if (bindingModule.singleton) {
       if (!bindingModule.instance) {
         bindingModule.instance = bindingModule.closure.apply(null, injections)

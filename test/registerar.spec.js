@@ -86,6 +86,24 @@ describe('Registerar', function () {
       }).catch(done)
   })
 
+  it('should work find when service provider binds multiple providers to Ioc container and it makes use of static injections', function (done) {
+
+    Ioc.bind('App/Foo', function () {
+      return 'foo'
+    })
+
+    let providers = [path.join(__dirname,'./providers/StaticGenerator')]
+    Registerar.register(providers, {})
+      .then(function () {
+        const Static = Ioc.use('App/Static')
+        const Fav = Ioc.use('App/Fav')
+        expect(Static.foo).to.equal('foo')
+        expect(Fav.foo).to.equal('foo')
+        done()
+      }).catch(done)
+
+  })
+
   it('should autoload a given directory and register mappings inside Ioc container', function (done) {
     const appDir = path.join(__dirname, './app')
 
