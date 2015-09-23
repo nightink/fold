@@ -7,6 +7,7 @@
 */
 
 const LoaderException = require('../Exception/loader')
+const logger = require('../../utils/logger')
 const walk = require('walk')
 const fs = require('fs')
 const path = require('path')
@@ -44,6 +45,7 @@ Loader.require = function (module) {
  * @public
  */
 Loader.resolve = function (bindings, module) {
+  logger.verbose('Fetching provider %s', module)
   if (!bindings[module]) {
     throw new LoaderException(`Unable to resolve ${module} inside container`)
   }
@@ -107,6 +109,7 @@ Loader.returnInjectionType = function (bindings, unresolvedBindings, aliases, du
   }else if (dump[injection]) {
     return 'LOCAL_MODULE'
   }else if(Loader._isDump(dumpNamespace,injection)) {
+    logger.verbose('Assumed %s is an autoload path', injection)
     return 'LOCAL_MODULE'
   }else {
     return 'NPM_MODULE'

@@ -11,6 +11,7 @@ const introspect = require('../../utils/introspect')
 const MakeException = require('../Exception/make')
 const ImplementationException = require('../Exception/implementation')
 const helpers = require('./helpers')
+const logger = require('../../utils/logger')
 const _ = require('lodash')
 const Q = require('q')
 
@@ -163,6 +164,7 @@ Ioc.aliases = function (hash) {
  * @public
  */
 Ioc.alias = function (key, namespace) {
+  logger.verbose('Aliasing %s as %s', namespace, key)
   aliases[key] = namespace
 }
 
@@ -226,7 +228,7 @@ Ioc.use = function (binding) {
 
   // if i am resolved provider than make me before returning
   if (type === 'PROVIDER' && helpers.isVerifiedAsBinding(binding, bindingModule)) {
-    let injections = helpers.injectTypeHintedInjections(resolveProviders, bindingModule)
+    let injections = helpers.injectProviderInjections(resolveProviders, bindingModule)
     injections = _.map(injections, function (injection, index) {
       return Ioc.use(index)
     })
@@ -306,8 +308,10 @@ Ioc.make = function (binding) {
       .then(function (resolvedClass) {
         switch (type) {
           case 'PROVIDER':
+            logger.verbose('Making provider %s with following injections', binding, resolveProviders[binding].injections)
             return Ioc._makeProvider(resolveProviders[binding])
           case 'UNRESOLVED_PROVIDER':
+            logger.verbose('Making provider %s with following injections', binding, resolveProviders[binding].injections)
             return Ioc._makeProvider(resolveProviders[binding])
           case 'NPM_MODULE':
             return new Promise(function (resolve) { resolve() })
@@ -369,6 +373,9 @@ Ioc._makeClass = function (Binding) {
     }
 
     if (injections && _.size(injections) > 0) {
+
+      logger.verbose('Class %s have following injections', Binding.name, injections)
+
       injections.forEach(function (injection) {
         injection = injection.replace(/_/g, '/')
         instances.push(Ioc.make(injection))

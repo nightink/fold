@@ -44,17 +44,16 @@ IocHelpers.isVerifiedAsBinding = function (binding, bindingModule) {
 }
 
 /**
- * @function injectTypeHintedInjections
+ * @function injectProviderInjections
  * @description return bindings required by a service provider
  * @param  {Object} bindings
  * @param  {Object} bindingModule
  * @return {Array}
  * @public
  */
-IocHelpers.injectTypeHintedInjections = function (bindings, bindingModule) {
+IocHelpers.injectProviderInjections = function (bindings, bindingModule) {
 
   const picked = _.pick(bindings, bindingModule.injections)
-
   const unableToPick = _.difference(bindingModule.injections,_.keys(picked))
 
   /**
