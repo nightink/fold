@@ -31,6 +31,16 @@ Loader.require = function (module) {
   try {
     return require(module)
   } catch(e) {
+    /**
+     * if error is a syntax error, parse file again to
+     * see check for error. v8 sucks here.
+     */
+    if(e.name === 'SyntaxError'){
+      const check = require('syntax-error');
+      var src = fs.readFileSync(module);
+      var err = check(src,module);
+      throw new Error(err)
+    }
     throw e
   }
 }

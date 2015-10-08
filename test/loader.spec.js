@@ -33,6 +33,14 @@ describe('Module Loader', function () {
       expect(fn).to.throw(Error)
     })
 
+    it('should throw syntax error properly', function () {
+      const fn = function () {
+        return Loader.require(path.join(__dirname,'./app/syntaxError.js'))
+      }
+      expect(fn).to.throw(/syntaxError\.js:3/)
+    })
+
+
     it('should load module using node require method', function () {
       const lodash = Loader.require('lodash')
       expect(lodash).to.be.a('function')
