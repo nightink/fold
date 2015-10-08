@@ -35,7 +35,7 @@ describe('Module Loader', function () {
 
     it('should throw syntax error properly', function () {
       const fn = function () {
-        return Loader.require(path.join(__dirname,'./app/syntaxError.js'))
+        return Loader.require(path.join(__dirname,'./app/syntaxError'))
       }
       expect(fn).to.throw(/syntaxError\.js:3/)
     })

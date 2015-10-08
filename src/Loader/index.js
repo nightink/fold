@@ -30,15 +30,17 @@ let Loader = exports = module.exports = {}
 Loader.require = function (module) {
   try {
     return require(module)
+    return r
   } catch(e) {
     /**
      * if error is a syntax error, parse file again to
      * see check for error. v8 sucks here.
      */
     if(e.name === 'SyntaxError'){
+      const filename = require.resolve(module)
       const check = require('syntax-error');
-      var src = fs.readFileSync(module);
-      var err = check(src,module);
+      var src = fs.readFileSync(filename);
+      var err = check(src,filename);
       throw new Error(err)
     }
     throw e
