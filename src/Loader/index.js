@@ -30,7 +30,6 @@ let Loader = exports = module.exports = {}
 Loader.require = function (module) {
   try {
     return require(module)
-    return r
   } catch(e) {
     /**
      * if error is a syntax error, parse file again to
